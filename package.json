@@ -1,0 +1,24 @@
+{
+  "name": "markdown-preprocessor",
+  "version": "1.0.0",
+  "description": "Preprocess markdown files",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./dist/spec"
+  },
+  "keywords": [
+    "preprocessor",
+    "markdown"
+  ],
+  "author": "Federico Ramirez",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "coffeescript": "^2.4.1",
+    "del": "^4.1.1",
+    "gulp": "^4.0.2",
+    "gulp-coffee": "^3.0.3",
+    "gulp-run": "^1.7.1",
+    "mocha": "^6.1.4"
+  }
+}
