@@ -81,3 +81,38 @@ describe 'MarkdownRenderer', ->
       """
       compile text, (compiled) ->
         expect(compiled).to.equal "#{text}\n\n"
+
+  describe 'lists', ->
+    it 'parses bulleted lists', ->
+      text = """
+      * one
+      * two
+      * three
+      """
+      compile text, (compiled) ->
+        expect(compiled).to.equal "#{text}\n\n"
+
+    it 'parses numbered lists', ->
+      text = """
+      1. one
+      1. two
+      1. three
+      """
+      compile text, (compiled) ->
+        expect(compiled).to.equal "#{text}\n\n"
+
+    it 'always uses `1.` on numbered lists', ->
+      given = """
+      1. one
+      2. two
+      3. three
+      """
+      expected = """
+      1. one
+      1. two
+      1. three
+
+
+      """
+      compile given, (compiled) ->
+        expect(compiled).to.equal expected

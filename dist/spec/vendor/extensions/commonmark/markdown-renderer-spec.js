@@ -71,7 +71,7 @@ describe('MarkdownRenderer', function() {
       return expect(compiled).to.equal(`${text}\n\n`);
     });
   });
-  return describe('codeblock', function() {
+  describe('codeblock', function() {
     it("parses with a language", function() {
       var text;
       text = "```ruby\na = 1\n```";
@@ -84,6 +84,30 @@ describe('MarkdownRenderer', function() {
       text = "```\na = 1\n```";
       return compile(text, function(compiled) {
         return expect(compiled).to.equal(`${text}\n\n`);
+      });
+    });
+  });
+  return describe('lists', function() {
+    it('parses bulleted lists', function() {
+      var text;
+      text = "* one\n* two\n* three";
+      return compile(text, function(compiled) {
+        return expect(compiled).to.equal(`${text}\n\n`);
+      });
+    });
+    it('parses numbered lists', function() {
+      var text;
+      text = "1. one\n1. two\n1. three";
+      return compile(text, function(compiled) {
+        return expect(compiled).to.equal(`${text}\n\n`);
+      });
+    });
+    return it('always uses `1.` on numbered lists', function() {
+      var expected, given;
+      given = "1. one\n2. two\n3. three";
+      expected = "1. one\n1. two\n1. three\n\n";
+      return compile(given, function(compiled) {
+        return expect(compiled).to.equal(expected);
       });
     });
   });

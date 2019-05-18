@@ -17,6 +17,7 @@ exports.MarkdownRenderer = class extends Renderer
     super()
     @options = Object.assign DEFAULT_OPTIONS, options
     @lastOut = '\n'
+    @listTypeTags = []
 
   document: ->
     # NOOP
@@ -58,8 +59,12 @@ exports.MarkdownRenderer = class extends Renderer
     @put "`"
 
   paragraph: (node, entering) ->
-    return if grandparent?.listTight
-    @put "\n\n" unless entering
+    return if entering
+
+    @put if node.parent?.parent?.listTight
+      "\n"
+    else
+      "\n\n"
 
   heading: (node, entering) ->
     if entering
@@ -83,29 +88,17 @@ exports.MarkdownRenderer = class extends Renderer
     if entering
       @put '> '
 
-  #   list: (node, entering) ->
-  #  tagname = if node.listType == 'bullet' then 'ul' else 'ol'
-  #  attrs = @attrs(node)
-  #  if entering
-  #    start = node.listStart
-  #    if start != null and start != 1
-  #      attrs.push [
-  #        'start'
-  #        start.toString()
-  #      ]
-  #    @cr()
-  #    @tag tagname, attrs
-  #    @cr()
-  #  else
-  #    @cr()
-  #    @tag '/' + tagname
-  #    @cr()
+  list: (node, entering) ->
+    if entering
+      tag = if node.listType is 'bullet' then '*' else '1.'
+      @listTypeTags.push(tag)
+    else
+      @listTypeTags.pop()
+      @put "\n" # this is an extra newline
 
   item: (node, entering) ->
-    if entering
-      @put "* "
-    else
-      @cr()
+    tag = @listTypeTags[@listTypeTags.length - 1]
+    @put "#{tag} " if entering
 
   html_block: (node) ->
     return if @options.safe

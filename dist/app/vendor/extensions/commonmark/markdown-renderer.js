@@ -24,6 +24,7 @@ exports.MarkdownRenderer = class extends Renderer {
     super();
     this.options = Object.assign(DEFAULT_OPTIONS, options);
     this.lastOut = '\n';
+    this.listTypeTags = [];
   }
 
   document() {}
@@ -71,12 +72,11 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   paragraph(node, entering) {
-    if (typeof grandparent !== "undefined" && grandparent !== null ? grandparent.listTight : void 0) {
+    var ref, ref1;
+    if (entering) {
       return;
     }
-    if (!entering) {
-      return this.put("\n\n");
-    }
+    return this.put(((ref = node.parent) != null ? (ref1 = ref.parent) != null ? ref1.listTight : void 0 : void 0) ? "\n" : "\n\n");
   }
 
   heading(node, entering) {
@@ -113,28 +113,22 @@ exports.MarkdownRenderer = class extends Renderer {
     }
   }
 
-  //   list: (node, entering) ->
-  //  tagname = if node.listType == 'bullet' then 'ul' else 'ol'
-  //  attrs = @attrs(node)
-  //  if entering
-  //    start = node.listStart
-  //    if start != null and start != 1
-  //      attrs.push [
-  //        'start'
-  //        start.toString()
-  //      ]
-  //    @cr()
-  //    @tag tagname, attrs
-  //    @cr()
-  //  else
-  //    @cr()
-  //    @tag '/' + tagname
-  //    @cr()
-  item(node, entering) {
+  list(node, entering) {
+    var tag;
     if (entering) {
-      return this.put("* ");
+      tag = node.listType === 'bullet' ? '*' : '1.';
+      return this.listTypeTags.push(tag);
     } else {
-      return this.cr();
+      this.listTypeTags.pop();
+      return this.put("\n"); // this is an extra newline
+    }
+  }
+
+  item(node, entering) {
+    var tag;
+    tag = this.listTypeTags[this.listTypeTags.length - 1];
+    if (entering) {
+      return this.put(`${tag} `);
     }
   }
 
