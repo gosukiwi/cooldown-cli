@@ -83,17 +83,13 @@ exports.MarkdownRenderer = class extends Renderer
   #  @cr()
 
   thematic_break: (node) ->
-    @put "---"
-    @put "\n\n"
+    @put "---\n\n"
 
   block_quote: (node, entering) ->
     if entering
-      @cr()
       @put '> '
-    else
-      @cr()
 
-  #list: (node, entering) ->
+  #   list: (node, entering) ->
   #  tagname = if node.listType == 'bullet' then 'ul' else 'ol'
   #  attrs = @attrs(node)
   #  if entering

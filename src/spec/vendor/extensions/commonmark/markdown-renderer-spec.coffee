@@ -54,3 +54,11 @@ describe 'MarkdownRenderer', ->
     """
     compile text, (compiled) ->
       expect(compiled).to.equal "#{text}\n\n"
+
+  it "parses blockquote", ->
+    text = """
+    > This is a blockquote
+    and it's broken into two lines.
+    """
+    compile text, (compiled) ->
+      expect(compiled).to.equal "#{text}\n\n"

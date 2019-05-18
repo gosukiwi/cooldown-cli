@@ -107,20 +107,16 @@ exports.MarkdownRenderer = class extends Renderer {
   //  @tag '/pre'
   //  @cr()
   thematic_break(node) {
-    this.put("---");
-    return this.put("\n\n");
+    return this.put("---\n\n");
   }
 
   block_quote(node, entering) {
     if (entering) {
-      this.cr();
       return this.put('> ');
-    } else {
-      return this.cr();
     }
   }
 
-  //list: (node, entering) ->
+  //   list: (node, entering) ->
   //  tagname = if node.listType == 'bullet' then 'ul' else 'ol'
   //  attrs = @attrs(node)
   //  if entering
