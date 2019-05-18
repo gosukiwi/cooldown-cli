@@ -1,16 +1,13 @@
 { Renderer } = require('./renderer')
 markdownEscape = require('markdown-escape')
-reUnsafeProtocol = /^javascript:|vbscript:|file:|data:/i
-reSafeDataProtocol = /^data:image\/(?:png|gif|jpeg|webp)/i
-
-potentiallyUnsafe = (url) ->
-  reUnsafeProtocol.test(url) and !reSafeDataProtocol.test(url)
 
 # TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
 # that in a transformation object/function.
+# TODO: This should be moved to a transformations API.
 DEFAULT_OPTIONS =
   softbreak: '\n'
   safe: false # skips inline HTML
+  emptyLineAfterHeadings: no
 
 exports.MarkdownRenderer = class extends Renderer
   constructor: (options) ->
@@ -54,9 +51,7 @@ exports.MarkdownRenderer = class extends Renderer
       "](#{node.destination})"
 
   code: (node) ->
-    @put "`"
-    @putEscaped node.literal
-    @put "`"
+    @put "`#{node.literal}`"
 
   paragraph: (node, entering) ->
     return if entering
@@ -70,14 +65,16 @@ exports.MarkdownRenderer = class extends Renderer
     if entering
       @put "#" for level in Array(node.level)
       @put " "
+    else
+      @cr()
+      @put "\n" if @options.emptyLineAfterHeadings
 
   code_block: (node) ->
     info_words = if node.info then node.info.split(/\s+/) else []
-    language = @esc(info_words[0] || "")
-    @cr()
+    language = info_words[0] || ""
     @put "```#{language}"
     @cr()
-    @putEscaped node.literal
+    @put node.literal
     @put "```"
     @put "\n\n"
 
@@ -109,9 +106,6 @@ exports.MarkdownRenderer = class extends Renderer
 
   # private
 
-  esc: (str) ->
-    markdownEscape str
-
   # alias of `out`
   putEscaped: (str) ->
     @out str
@@ -120,6 +114,5 @@ exports.MarkdownRenderer = class extends Renderer
   put: (str) ->
     @lit str
 
-  # TODO: Delete this method
-  tag: (name) ->
-    @put "[#{name}]"
+  esc: (str) ->
+    markdownEscape(str)

@@ -1,22 +1,16 @@
-var DEFAULT_OPTIONS, Renderer, markdownEscape, potentiallyUnsafe, reSafeDataProtocol, reUnsafeProtocol;
+var DEFAULT_OPTIONS, Renderer, markdownEscape;
 
 ({Renderer} = require('./renderer'));
 
 markdownEscape = require('markdown-escape');
 
-reUnsafeProtocol = /^javascript:|vbscript:|file:|data:/i;
-
-reSafeDataProtocol = /^data:image\/(?:png|gif|jpeg|webp)/i;
-
-potentiallyUnsafe = function(url) {
-  return reUnsafeProtocol.test(url) && !reSafeDataProtocol.test(url);
-};
-
 // TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
 // that in a transformation object/function.
+// TODO: This should be moved to a transformations API.
 DEFAULT_OPTIONS = {
   softbreak: '\n',
-  safe: false // skips inline HTML
+  safe: false, // skips inline HTML
+  emptyLineAfterHeadings: false
 };
 
 exports.MarkdownRenderer = class extends Renderer {
@@ -66,9 +60,7 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   code(node) {
-    this.put("`");
-    this.putEscaped(node.literal);
-    return this.put("`");
+    return this.put(`\`${node.literal}\``);
   }
 
   paragraph(node, entering) {
@@ -88,17 +80,21 @@ exports.MarkdownRenderer = class extends Renderer {
         this.put("#");
       }
       return this.put(" ");
+    } else {
+      this.cr();
+      if (this.options.emptyLineAfterHeadings) {
+        return this.put("\n");
+      }
     }
   }
 
   code_block(node) {
     var info_words, language;
     info_words = node.info ? node.info.split(/\s+/) : [];
-    language = this.esc(info_words[0] || "");
-    this.cr();
+    language = info_words[0] || "";
     this.put(`\`\`\`${language}`);
     this.cr();
-    this.putEscaped(node.literal);
+    this.put(node.literal);
     this.put("```");
     return this.put("\n\n");
   }
@@ -142,9 +138,6 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   // private
-  esc(str) {
-    return markdownEscape(str);
-  }
 
   // alias of `out`
   putEscaped(str) {
@@ -156,9 +149,8 @@ exports.MarkdownRenderer = class extends Renderer {
     return this.lit(str);
   }
 
-  // TODO: Delete this method
-  tag(name) {
-    return this.put(`[${name}]`);
+  esc(str) {
+    return markdownEscape(str);
   }
 
 };

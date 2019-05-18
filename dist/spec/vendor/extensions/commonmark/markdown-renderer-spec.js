@@ -49,7 +49,7 @@ describe('MarkdownRenderer', function() {
   });
   it("parses heading", function() {
     return compile("### Level 3 heading", function(compiled) {
-      return expect(compiled).to.equal("### Level 3 heading");
+      return expect(compiled).to.equal("### Level 3 heading\n");
     });
   });
   it("parses HTML inline", function() {
@@ -87,7 +87,7 @@ describe('MarkdownRenderer', function() {
       });
     });
   });
-  return describe('lists', function() {
+  describe('lists', function() {
     it('parses bulleted lists', function() {
       var text;
       text = "* one\n* two\n* three";
@@ -109,6 +109,13 @@ describe('MarkdownRenderer', function() {
       return compile(given, function(compiled) {
         return expect(compiled).to.equal(expected);
       });
+    });
+  });
+  return it("works with a big complex example", function() {
+    var given;
+    given = "# Cooldown - Style and automate your markdown!\nCooldown allows you to transform markdown files so they all follow the same\nrules.\n\nIt could be considered a compiler, or a linter which auto-fixes issues. The\nwhole  idea behind Cooldown is simply being able to generate standard markdown\nfiles.\n\nAdditionally, you can apply transformations to the markdown, for example, you\ncan replace all code snippets with gist embed codes.\n\n# Usage\n`coolfile.js`:\n\n```javascript\nexports.default = function (transformations) {\n  [\n    transformations.gist(),\n    transformations.joinSentences()\n  ]\n}\n```\n\nThen simply run:\n\n```bash\n$ cooldown src/\*.md dst/\n```\n\nAnd markdown looking like this:\n\n```markdown\n# A title\n\nA paragraph with a long sentence which is\nbroken in two lines.\n\nAnother paragraph. There is some code below:\n\n```ruby\nsome = \"code\"\n```\n\nWill be translated to:\n\n```markdown\n# A title\n\nA paragraph with a long sentence which is broken in two lines.\n\nAnother paragraph. There is some code below:\n\n<script...></script>\n```\n\n# Developers\nThe application code lives in `src/app`. This application uses `gulp` and\nCofeeScript. You can install gulp with:\n\n```bash\n$ npm install -g gulp\n```\n\nOnce it's installed, you can watch code in `src/` and run specs on any file\nchange with:\n\n```bash\n$ gulp\n```\n\nRemember to run `npm install` before running `gulp` for the first time.\n\n## Specs\nSpecs live in `src/spec/`.";
+    return compile(given, function(compiled) {
+      return expect(compiled).to.equal(`${given}\n\n`);
     });
   });
 });

@@ -22,7 +22,9 @@ exports.default = function (transformations) {
 
 Then simply run:
 
-    $ cooldown src/\*.md dst/
+```bash
+$ cooldown src/\*.md dst/
+```
 
 And markdown looking like this:
 
@@ -54,12 +56,16 @@ Another paragraph. There is some code below:
 The application code lives in `src/app`. This application uses `gulp` and
 CofeeScript. You can install gulp with:
 
-    $ npm install -g gulp
+```bash
+$ npm install -g gulp
+```
 
 Once it's installed, you can watch code in `src/` and run specs on any file
 change with:
 
-    $ gulp
+```bash
+$ gulp
+```
 
 Remember to run `npm install` before running `gulp` for the first time.
 
