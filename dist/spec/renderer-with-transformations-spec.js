@@ -1,23 +1,42 @@
-var MarkdownRenderer, NoSoftBreak, RendererWithTransformations, commonmark, expect;
-
-({expect} = require('chai'));
-
-({MarkdownRenderer} = require_from_app('vendor/extensions/commonmark/markdown-renderer'));
+var RendererWithTransformations, dummyAstWalker, timesRun;
 
 ({RendererWithTransformations} = require_from_app('renderer-with-transformations'));
 
-({NoSoftBreak} = require_from_app('transformations/no-soft-break'));
+timesRun = 0;
 
-commonmark = require('commonmark');
+dummyAstWalker = function() {
+  return {
+    next: function() {
+      if (timesRun === 0) {
+        timesRun += 1;
+        return {
+          node: {
+            type: 'paragraph'
+          },
+          entering: true
+        };
+      } else {
+        return null;
+      }
+    }
+  };
+};
 
 describe('RendererWithTransformations', function() {
-  return it("transforms `NoSoftBreak`", function() {
-    var ast, given, parser, renderer, transformations;
-    given = "This is\na sentence.";
-    transformations = [NoSoftBreak];
-    renderer = new RendererWithTransformations(new MarkdownRenderer(), transformations);
-    parser = new commonmark.Parser();
-    ast = parser.parse(given);
-    return expect(renderer.render(ast)).to.equal("This is a sentence.\n\n");
+  return it("runs the transformation when called", function() {
+    var dummyTransformation, renderer, wasCalled;
+    wasCalled = false;
+    dummyTransformation = {
+      paragraph: {
+        enter: function() {
+          return wasCalled = true;
+        }
+      }
+    };
+    renderer = new RendererWithTransformations({}, [dummyTransformation]);
+    renderer.render({
+      walker: dummyAstWalker
+    });
+    return expect(wasCalled).to.equal(true);
   });
 });

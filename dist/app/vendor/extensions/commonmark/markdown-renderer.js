@@ -29,7 +29,6 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   softbreak() {
-    console.log('softbreak');
     return this.put(this.options.softbreak);
   }
 

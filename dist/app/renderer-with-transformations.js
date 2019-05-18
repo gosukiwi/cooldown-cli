@@ -1,10 +1,13 @@
-var MarkdownRenderer, RendererObserver, commonmark;
+// This class takes a renderer and a collection of transformations. Then when
+// rendering the AST, for each node type, it will run all relevant
+// transformations on that node.
 
-commonmark = require('commonmark');
+// Each transformation is a function which is applied in the context of the
+// renderer, so it has access to all it's properties and methods, just like any
+// other method.
 
-({MarkdownRenderer} = require('./vendor/extensions/commonmark/markdown-renderer'));
-
-({RendererObserver} = require('./renderer-observer'));
+// If a transformation was not defined for a particular node type, it defaults to
+// running the renderer's method instead.
 
 exports.RendererWithTransformations = class {
   constructor(renderer, transformations) {
@@ -13,25 +16,30 @@ exports.RendererWithTransformations = class {
   }
 
   render(ast) {
-    var atLeastOneTransformationWasRun, event, walker;
-    this.renderer.render(ast);
-    walker = ast.walker();
+    var event, walker;
     this.renderer.buffer = '';
     this.renderer.lastOut = '\n';
+    walker = ast.walker();
     while ((event = walker.next())) {
-      atLeastOneTransformationWasRun = this.runTransformationsOn(event.node, event.entering);
-      if (!atLeastOneTransformationWasRun) {
-        if (typeof this.renderer[event.node.type] === 'function') {
-          this.renderer[event.node.type](event.node, event.entering);
-        } else {
-          throw new Error(`Method not found. Please, implement \`#${event.node.type}'`);
-        }
-      }
+      this.compileNode(event.node, event.entering);
     }
     return this.renderer.buffer;
   }
 
   // private
+  compileNode(node, entering) {
+    var anyTransformationWasRun;
+    anyTransformationWasRun = this.runTransformationsOn(node, entering);
+    if (anyTransformationWasRun) {
+      return;
+    }
+    if (typeof this.renderer[node.type] === 'function') {
+      return this.renderer[node.type](node, entering);
+    } else {
+      throw new Error(`Method not found. Please, implement \`#${node.type}'`);
+    }
+  }
+
   runTransformationsOn(node, entering) {
     var transformation;
     return ((function() {
@@ -53,7 +61,6 @@ exports.RendererWithTransformations = class {
     }
     action = entering ? 'enter' : 'leave';
     if (transformation[node.type][action]) {
-      console.log('apply transformation', transformation[node.type][action]);
       transformation[node.type][action].apply(this.renderer, node);
       return true;
     } else {

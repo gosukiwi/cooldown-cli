@@ -1,18 +1,25 @@
-{ expect } = require('chai')
-{ MarkdownRenderer } = require_from_app('vendor/extensions/commonmark/markdown-renderer')
 { RendererWithTransformations } = require_from_app('renderer-with-transformations')
-{ NoSoftBreak } = require_from_app('transformations/no-soft-break')
-commonmark = require('commonmark')
+
+timesRun = 0
+dummyAstWalker = ->
+  next: ->
+    if timesRun is 0
+      timesRun += 1
+      node:
+        type: 'paragraph'
+      entering: true
+    else
+      null
 
 describe 'RendererWithTransformations', ->
-  it "transforms `NoSoftBreak`", ->
-    given = """
-    This is
-    a sentence.
-    """
-    transformations = [ NoSoftBreak ]
-    renderer = new RendererWithTransformations(new MarkdownRenderer(), transformations)
-    parser   = new commonmark.Parser()
-    ast      = parser.parse(given)
+  it "runs the transformation when called", ->
+    wasCalled = no
+    dummyTransformation =
+      paragraph:
+        enter: ->
+          wasCalled = yes
 
-    expect(renderer.render(ast)).to.equal("This is a sentence.\n\n")
+    renderer = new RendererWithTransformations({}, [dummyTransformation])
+    renderer.render({ walker: dummyAstWalker })
+
+    expect(wasCalled).to.equal(yes)
