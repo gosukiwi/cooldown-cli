@@ -1,0 +1,3 @@
+# ignore the `dist` folder when doing diffs in git
+# for more info on this, see: https://stackoverflow.com/a/4381039/1015566
+dist/**/* -diff

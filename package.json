@@ -4,7 +4,7 @@
   "description": "Preprocess markdown files",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./dist/spec"
+    "test": "mocha --recursive --file ./dist/spec/spec_helper.js ./dist/spec"
   },
   "keywords": [
     "preprocessor",
@@ -21,6 +21,8 @@
     "mocha": "^6.1.4"
   },
   "dependencies": {
+    "commonmark": "^0.29.0",
+    "markdown-escape": "^1.0.2",
     "superagent": "^5.0.5"
   }
 }
