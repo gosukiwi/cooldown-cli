@@ -27,3 +27,7 @@ describe 'MarkdownRenderer', ->
   it "parses link", ->
     compile "[some link](http://some.website)", (compiled) ->
       expect(compiled).to.equal "[some link](http://some.website)\n\n"
+
+  it "parses code", ->
+    compile "this is `code`", (compiled) ->
+      expect(compiled).to.equal "this is `code`\n\n"
