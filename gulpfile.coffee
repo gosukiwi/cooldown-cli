@@ -1,6 +1,5 @@
 { src, dest, watch, series } = require('gulp')
 coffee = require('gulp-coffee')
-run = require('gulp-run')
 del = require('del')
 
 cleanTask = ->
@@ -11,9 +10,6 @@ coffeeTask = ->
     .pipe(coffee(bare: true))
     .pipe(dest('./dist/'))
 
-testsTask = ->
-  run('npm run test').exec()
+watch ['src/**/*.coffee'], series(cleanTask, coffeeTask)
 
-watch ['src/**/*.coffee'], series(cleanTask, coffeeTask, testsTask)
-
-exports.default = series(cleanTask, coffeeTask, testsTask)
+exports.default = series(cleanTask, coffeeTask)

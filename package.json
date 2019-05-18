@@ -18,7 +18,9 @@
     "del": "^4.1.1",
     "gulp": "^4.0.2",
     "gulp-coffee": "^3.0.3",
-    "gulp-run": "^1.7.1",
     "mocha": "^6.1.4"
+  },
+  "dependencies": {
+    "superagent": "^5.0.5"
   }
 }
