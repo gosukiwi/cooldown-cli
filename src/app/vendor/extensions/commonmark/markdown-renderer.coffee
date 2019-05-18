@@ -23,6 +23,7 @@ exports.MarkdownRenderer = class extends Renderer
     @putEscaped node.literal
 
   softbreak: ->
+    console.log 'softbreak'
     @put @options.softbreak
 
   linebreak: ->

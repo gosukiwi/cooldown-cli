@@ -1,7 +1,8 @@
 # Translated to CoffeeScript from
 # https://github.com/commonmark/commonmark.js/blob/c8798f34bf2e6c219ad477dfa5f1e52eb7ca57e4/lib/render/renderer.js
 #
-# Base `Renderer` class implementing the visitor pattern.
+# Base `Renderer` class implementing the visitor pattern. It has some minor
+# modifications.
 #
 exports.Renderer = class
   # Walks the AST and calls member methods for each Node type.
