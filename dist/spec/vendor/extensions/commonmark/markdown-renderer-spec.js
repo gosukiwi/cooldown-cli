@@ -34,7 +34,7 @@ describe('MarkdownRenderer', function() {
     var text;
     text = "A paragraph with a long sentence which is\nbroken in two lines.";
     return compile(text, function(compiled) {
-      return expect(compiled).to.equal("A paragraph with a long sentence which is\nbroken in two lines.\n\n");
+      return expect(compiled).to.equal(`${text}\n\n`);
     });
   });
   it("parses link", function() {
@@ -52,9 +52,16 @@ describe('MarkdownRenderer', function() {
       return expect(compiled).to.equal("### Level 3 heading");
     });
   });
-  return it("parses HTML inline", function() {
+  it("parses HTML inline", function() {
     return compile("<strong>some html</strong>", function(compiled) {
       return expect(compiled).to.equal("<strong>some html</strong>\n\n");
+    });
+  });
+  return it("parses thematic break", function() {
+    var text;
+    text = "some text\n\n---\n\nmore text";
+    return compile(text, function(compiled) {
+      return expect(compiled).to.equal(`${text}\n\n`);
     });
   });
 });

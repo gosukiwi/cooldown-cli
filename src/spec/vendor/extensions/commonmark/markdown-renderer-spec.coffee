@@ -26,7 +26,7 @@ describe 'MarkdownRenderer', ->
     broken in two lines.
     """
     compile text, (compiled) ->
-      expect(compiled).to.equal "A paragraph with a long sentence which is\nbroken in two lines.\n\n"
+      expect(compiled).to.equal "#{text}\n\n"
 
   it "parses link", ->
     compile "[some link](http://some.website)", (compiled) ->
@@ -43,3 +43,14 @@ describe 'MarkdownRenderer', ->
   it "parses HTML inline", ->
     compile "<strong>some html</strong>", (compiled) ->
       expect(compiled).to.equal "<strong>some html</strong>\n\n"
+
+  it "parses thematic break", ->
+    text = """
+    some text
+
+    ---
+
+    more text
+    """
+    compile text, (compiled) ->
+      expect(compiled).to.equal "#{text}\n\n"

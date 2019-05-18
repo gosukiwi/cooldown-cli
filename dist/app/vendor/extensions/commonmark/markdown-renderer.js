@@ -107,9 +107,8 @@ exports.MarkdownRenderer = class extends Renderer {
   //  @tag '/pre'
   //  @cr()
   thematic_break(node) {
-    this.cr();
     this.put("---");
-    return this.cr();
+    return this.put("\n\n");
   }
 
   block_quote(node, entering) {

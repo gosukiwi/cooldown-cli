@@ -83,9 +83,8 @@ exports.MarkdownRenderer = class extends Renderer
   #  @cr()
 
   thematic_break: (node) ->
-    @cr()
     @put "---"
-    @cr()
+    @put "\n\n"
 
   block_quote: (node, entering) ->
     if entering
