@@ -1,15 +1,25 @@
 commonmark = require('commonmark')
 { MarkdownRenderer } = require_from_app('vendor/extensions/commonmark/markdown-renderer')
 
+parser   = new commonmark.Parser()
+renderer = new MarkdownRenderer()
+compile  = (input, callback) ->
+  ast = parser.parse(input)
+  callback renderer.render(ast)
+
 describe 'MarkdownRenderer', ->
   it "parses strong", ->
-    parser   = new commonmark.Parser()
-    ast      = parser.parse("Hello **world**!")
-    renderer = new MarkdownRenderer()
-    expect(renderer.render(ast)).to.equal("Hello **world**!\n\n")
+    compile 'Hello **world**!', (compiled) ->
+      expect(compiled).to.equal("Hello **world**!\n\n")
 
   it "parses image", ->
-    parser   = new commonmark.Parser()
-    ast      = parser.parse("![my title](http://some.image)")
-    renderer = new MarkdownRenderer()
-    expect(renderer.render(ast)).to.equal("![my title](http://some.image)\n\n")
+    compile '![my title](http://some.image)', (compiled) ->
+      expect(compiled).to.equal("![my title](http://some.image)\n\n")
+
+  it "parses paragraph", ->
+    text = """
+    A paragraph with a long sentence which is
+    broken in two lines.
+    """
+    compile text, (compiled) ->
+      expect(compiled).to.equal "A paragraph with a long sentence which is\nbroken in two lines.\n\n"
