@@ -15,6 +15,11 @@ compile = function(input, callback) {
 };
 
 describe('MarkdownRenderer', function() {
+  it("parses emphasis", function() {
+    return compile('Hello _world_!', function(compiled) {
+      return expect(compiled).to.equal("Hello _world_!\n\n");
+    });
+  });
   it("parses strong", function() {
     return compile('Hello **world**!', function(compiled) {
       return expect(compiled).to.equal("Hello **world**!\n\n");
@@ -37,9 +42,14 @@ describe('MarkdownRenderer', function() {
       return expect(compiled).to.equal("[some link](http://some.website)\n\n");
     });
   });
-  return it("parses code", function() {
+  it("parses code", function() {
     return compile("this is `code`", function(compiled) {
       return expect(compiled).to.equal("this is `code`\n\n");
+    });
+  });
+  return it("parses heading", function() {
+    return compile("### Level 3 heading", function(compiled) {
+      return expect(compiled).to.equal("### Level 3 heading");
     });
   });
 });

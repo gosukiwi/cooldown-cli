@@ -8,6 +8,10 @@ compile  = (input, callback) ->
   callback renderer.render(ast)
 
 describe 'MarkdownRenderer', ->
+  it "parses emphasis", ->
+    compile 'Hello _world_!', (compiled) ->
+      expect(compiled).to.equal("Hello _world_!\n\n")
+
   it "parses strong", ->
     compile 'Hello **world**!', (compiled) ->
       expect(compiled).to.equal("Hello **world**!\n\n")
@@ -31,3 +35,7 @@ describe 'MarkdownRenderer', ->
   it "parses code", ->
     compile "this is `code`", (compiled) ->
       expect(compiled).to.equal "this is `code`\n\n"
+
+  it "parses heading", ->
+    compile "### Level 3 heading", (compiled) ->
+      expect(compiled).to.equal "### Level 3 heading"
