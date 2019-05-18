@@ -25,11 +25,16 @@ describe('MarkdownRenderer', function() {
       return expect(compiled).to.equal("![my title](http://some.image)\n\n");
     });
   });
-  return it("parses paragraph", function() {
+  it("parses paragraph", function() {
     var text;
     text = "A paragraph with a long sentence which is\nbroken in two lines.";
     return compile(text, function(compiled) {
       return expect(compiled).to.equal("A paragraph with a long sentence which is\nbroken in two lines.\n\n");
+    });
+  });
+  return it("parses link", function() {
+    return compile("[some link](http://some.website)", function(compiled) {
+      return expect(compiled).to.equal("[some link](http://some.website)\n\n");
     });
   });
 });

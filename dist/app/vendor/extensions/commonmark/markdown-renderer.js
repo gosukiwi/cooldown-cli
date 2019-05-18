@@ -1,4 +1,4 @@
-var Renderer, markdownEscape, potentiallyUnsafe, reSafeDataProtocol, reUnsafeProtocol;
+var DEFAULT_OPTIONS, Renderer, markdownEscape, potentiallyUnsafe, reSafeDataProtocol, reUnsafeProtocol;
 
 ({Renderer} = require('./renderer'));
 
@@ -12,17 +12,17 @@ potentiallyUnsafe = function(url) {
   return reUnsafeProtocol.test(url) && !reSafeDataProtocol.test(url);
 };
 
+// TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
+// that in a transformation object/function.
+DEFAULT_OPTIONS = {
+  softbreak: '\n',
+  safe: false // skips inline HTML
+};
+
 exports.MarkdownRenderer = class extends Renderer {
   constructor(options) {
-    var defaultOptions;
     super();
-    // TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
-    // that in a transformation object/function.
-    defaultOptions = {
-      softbreak: '\n',
-      safe: false // skips inline HTML
-    };
-    this.options = Object.assign(defaultOptions, options);
+    this.options = Object.assign(DEFAULT_OPTIONS, options);
     this.lastOut = '\n';
   }
 
@@ -57,23 +57,10 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   link(node, entering) {
-    return this.put(entering ? `[${node.destination}](` : ` "${node.title})")`);
+    return this.put(entering ? "[" : `${node.title}](${node.destination})`);
   }
 
   image(node, entering) {
-    // if entering
-    //   if @disableTags == 0
-    //     if @options.safe and potentiallyUnsafe(node.destination)
-    //       @put '<img src="" alt="'
-    //     else
-    //       @put '<img src="' + @esc(node.destination, false) + '" alt="'
-    //   @disableTags += 1
-    // else
-    //   @disableTags -= 1
-    //   if @disableTags == 0
-    //     if node.title
-    //       @put '" title="' + @esc(node.title, false)
-    //     @put '" />'
     return this.put(entering ? `![${node.title}` : `](${node.destination})`);
   }
 
@@ -165,24 +152,6 @@ exports.MarkdownRenderer = class extends Renderer {
     }
     this.cr();
     this.put(node.literal);
-    return this.cr();
-  }
-
-  custom_inline(node, entering) {
-    if (entering && node.onEnter) {
-      return this.put(node.onEnter);
-    } else if (!entering && node.onExit) {
-      return this.put(node.onExit);
-    }
-  }
-
-  custom_block(node, entering) {
-    this.cr();
-    if (entering && node.onEnter) {
-      this.put(node.onEnter);
-    } else if (!entering && node.onExit) {
-      this.put(node.onExit);
-    }
     return this.cr();
   }
 

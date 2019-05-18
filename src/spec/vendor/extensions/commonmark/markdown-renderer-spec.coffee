@@ -23,3 +23,7 @@ describe 'MarkdownRenderer', ->
     """
     compile text, (compiled) ->
       expect(compiled).to.equal "A paragraph with a long sentence which is\nbroken in two lines.\n\n"
+
+  it "parses link", ->
+    compile "[some link](http://some.website)", (compiled) ->
+      expect(compiled).to.equal "[some link](http://some.website)\n\n"

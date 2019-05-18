@@ -6,17 +6,16 @@ reSafeDataProtocol = /^data:image\/(?:png|gif|jpeg|webp)/i
 potentiallyUnsafe = (url) ->
   reUnsafeProtocol.test(url) and !reSafeDataProtocol.test(url)
 
+# TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
+# that in a transformation object/function.
+DEFAULT_OPTIONS =
+  softbreak: '\n'
+  safe: false # skips inline HTML
+
 exports.MarkdownRenderer = class extends Renderer
   constructor: (options) ->
     super()
-
-    # TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
-    # that in a transformation object/function.
-    defaultOptions =
-      softbreak: '\n'
-      safe: false # skips inline HTML
-
-    @options = Object.assign defaultOptions, options
+    @options = Object.assign DEFAULT_OPTIONS, options
     @lastOut = '\n'
 
   document: ->
@@ -43,24 +42,11 @@ exports.MarkdownRenderer = class extends Renderer
 
   link: (node, entering) ->
     @put if entering
-      "[#{node.destination}]("
+      "["
     else
-      " \"#{node.title})\")"
+      "#{node.title}](#{node.destination})"
 
   image: (node, entering) ->
-    # if entering
-    #   if @disableTags == 0
-    #     if @options.safe and potentiallyUnsafe(node.destination)
-    #       @put '<img src="" alt="'
-    #     else
-    #       @put '<img src="' + @esc(node.destination, false) + '" alt="'
-    #   @disableTags += 1
-    # else
-    #   @disableTags -= 1
-    #   if @disableTags == 0
-    #     if node.title
-    #       @put '" title="' + @esc(node.title, false)
-    #     @put '" />'
     @put if entering
       "![#{node.title}"
     else
@@ -137,20 +123,6 @@ exports.MarkdownRenderer = class extends Renderer
 
     @cr()
     @put node.literal
-    @cr()
-
-  custom_inline: (node, entering) ->
-    if entering and node.onEnter
-      @put node.onEnter
-    else if !entering and node.onExit
-      @put node.onExit
-
-  custom_block: (node, entering) ->
-    @cr()
-    if entering and node.onEnter
-      @put node.onEnter
-    else if !entering and node.onExit
-      @put node.onExit
     @cr()
 
   # private
