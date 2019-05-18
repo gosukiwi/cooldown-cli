@@ -66,21 +66,15 @@ exports.MarkdownRenderer = class extends Renderer
       @put "#" for level in Array(node.level)
       @put " "
 
-  #code_block: (node) ->
-  #  info_words = if node.info then node.info.split(/\s+/) else []
-  #  attrs = @attrs(node)
-  #  if info_words.length > 0 and info_words[0].length > 0
-  #    attrs.push [
-  #      'class'
-  #      'language-' + @esc(info_words[0], false)
-  #    ]
-  #  @cr()
-  #  @tag 'pre'
-  #  @tag 'code', attrs
-  #  @putEscaped node.literal
-  #  @tag '/code'
-  #  @tag '/pre'
-  #  @cr()
+  code_block: (node) ->
+    info_words = if node.info then node.info.split(/\s+/) else []
+    language = @esc(info_words[0] || "")
+    @cr()
+    @put "```#{language}"
+    @cr()
+    @putEscaped node.literal
+    @put "```"
+    @put "\n\n"
 
   thematic_break: (node) ->
     @put "---\n\n"

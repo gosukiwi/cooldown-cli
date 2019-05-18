@@ -91,21 +91,18 @@ exports.MarkdownRenderer = class extends Renderer {
     }
   }
 
-  //code_block: (node) ->
-  //  info_words = if node.info then node.info.split(/\s+/) else []
-  //  attrs = @attrs(node)
-  //  if info_words.length > 0 and info_words[0].length > 0
-  //    attrs.push [
-  //      'class'
-  //      'language-' + @esc(info_words[0], false)
-  //    ]
-  //  @cr()
-  //  @tag 'pre'
-  //  @tag 'code', attrs
-  //  @putEscaped node.literal
-  //  @tag '/code'
-  //  @tag '/pre'
-  //  @cr()
+  code_block(node) {
+    var info_words, language;
+    info_words = node.info ? node.info.split(/\s+/) : [];
+    language = this.esc(info_words[0] || "");
+    this.cr();
+    this.put(`\`\`\`${language}`);
+    this.cr();
+    this.putEscaped(node.literal);
+    this.put("```");
+    return this.put("\n\n");
+  }
+
   thematic_break(node) {
     return this.put("---\n\n");
   }

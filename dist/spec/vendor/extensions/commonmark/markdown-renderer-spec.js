@@ -64,11 +64,27 @@ describe('MarkdownRenderer', function() {
       return expect(compiled).to.equal(`${text}\n\n`);
     });
   });
-  return it("parses blockquote", function() {
+  it("parses blockquote", function() {
     var text;
     text = "> This is a blockquote\nand it's broken into two lines.";
     return compile(text, function(compiled) {
       return expect(compiled).to.equal(`${text}\n\n`);
+    });
+  });
+  return describe('codeblock', function() {
+    it("parses with a language", function() {
+      var text;
+      text = "```ruby\na = 1\n```";
+      return compile(text, function(compiled) {
+        return expect(compiled).to.equal(`${text}\n\n`);
+      });
+    });
+    return it("parses without a language", function() {
+      var text;
+      text = "```\na = 1\n```";
+      return compile(text, function(compiled) {
+        return expect(compiled).to.equal(`${text}\n\n`);
+      });
     });
   });
 });

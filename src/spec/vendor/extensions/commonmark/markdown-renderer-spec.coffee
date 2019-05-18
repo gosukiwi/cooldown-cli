@@ -62,3 +62,22 @@ describe 'MarkdownRenderer', ->
     """
     compile text, (compiled) ->
       expect(compiled).to.equal "#{text}\n\n"
+
+  describe 'codeblock', ->
+    it "parses with a language", ->
+      text = """
+      ```ruby
+      a = 1
+      ```
+      """
+      compile text, (compiled) ->
+        expect(compiled).to.equal "#{text}\n\n"
+
+    it "parses without a language", ->
+      text = """
+      ```
+      a = 1
+      ```
+      """
+      compile text, (compiled) ->
+        expect(compiled).to.equal "#{text}\n\n"
