@@ -47,9 +47,14 @@ describe('MarkdownRenderer', function() {
       return expect(compiled).to.equal("this is `code`\n\n");
     });
   });
-  return it("parses heading", function() {
+  it("parses heading", function() {
     return compile("### Level 3 heading", function(compiled) {
       return expect(compiled).to.equal("### Level 3 heading");
+    });
+  });
+  return it("parses HTML inline", function() {
+    return compile("<strong>some html</strong>", function(compiled) {
+      return expect(compiled).to.equal("<strong>some html</strong>\n\n");
     });
   });
 });

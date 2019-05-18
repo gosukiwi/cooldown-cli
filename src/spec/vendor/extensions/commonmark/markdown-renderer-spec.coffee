@@ -39,3 +39,7 @@ describe 'MarkdownRenderer', ->
   it "parses heading", ->
     compile "### Level 3 heading", (compiled) ->
       expect(compiled).to.equal "### Level 3 heading"
+
+  it "parses HTML inline", ->
+    compile "<strong>some html</strong>", (compiled) ->
+      expect(compiled).to.equal "<strong>some html</strong>\n\n"
