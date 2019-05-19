@@ -1,5 +1,4 @@
 #{ GistsStore } = require("../stores/gists-store")
-sha1 = require('sha1')
 
 store =
   create: ->
@@ -23,12 +22,11 @@ exports.GistSnippets =
       info_words = if node.info then node.info.split(/\s+/) else []
       language   = info_words[0]
       extension  = commonLanguageExtensions?[language] or language
-      sha1       = sha1(node.literal)
       options    =
         description: "Demo from node",
         public: false,
         files:
-          "snippet-#{sha1}.#{extension}":
+          "snippet.#{extension}":
             content: node.literal
 
       store.create options, (err, res) ->

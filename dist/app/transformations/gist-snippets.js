@@ -1,7 +1,5 @@
 //{ GistsStore } = require("../stores/gists-store")
-var commonLanguageExtensions, sha1, store;
-
-sha1 = require('sha1');
+var commonLanguageExtensions, store;
 
 store = {
   create: function() {
@@ -29,12 +27,11 @@ exports.GistSnippets = {
       info_words = node.info ? node.info.split(/\s+/) : [];
       language = info_words[0];
       extension = (commonLanguageExtensions != null ? commonLanguageExtensions[language] : void 0) || language;
-      sha1 = sha1(node.literal);
       options = {
         description: "Demo from node",
         public: false,
         files: {
-          [`snippet-${sha1}.${extension}`]: {
+          [`snippet.${extension}`]: {
             content: node.literal
           }
         }

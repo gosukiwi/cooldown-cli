@@ -1,3 +1,6 @@
+# { LocalStorage } = require('node-localstorage')
+# new LocalStorage('./cooldown')
+
 # Let's not create too many gists, they can flood the users' account with
 # garbage.
 #
@@ -5,9 +8,19 @@
 # repeat them too much, and also delete/update when possible.
 #
 exports.GistsStore = class
-  constructor: (client) ->
+  constructor: (client, storage) ->
     @client = client
+    @storage = storage
 
-  create: (options, callback) ->
-    @client.create options, callback
+  create: (gist, callback) ->
+    key = gist.cacheKey()
+    cached = @storage.getItem(key)
+    if cached
+      callback?(cached)
+      return this
+
+    @storage.setItem(key, gist)
+    @client.create gist.toHash(), (err, res) ->
+      callback?(gist)
+
     this
