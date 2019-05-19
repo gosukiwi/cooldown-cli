@@ -1,5 +1,3 @@
-superagent = require('superagent')
-
 # Let's not create too many gists, they can flood the users' account with
 # garbage.
 #
@@ -8,20 +6,8 @@ superagent = require('superagent')
 #
 exports.GistStore = class
   constructor: (username) ->
-    @api = new GistAPI(username)
+    #@api = new Client(username)
 
   create: (options, callback) ->
-    @api.create options, callback
-
-class GistAPI
-  constructor: (username) ->
-    @username = username
-    @token = process.env.GITHUB_TOKEN
-
-  create: (params, callback) ->
-    superagent
-      .post("https://api.github.com/gists")
-      .set("User-Agent", "request")
-      .auth(@username, @token)
-      .send(params)
-      .end((err, res) -> callback(err, res))
+    #@api.create options, callback
+    true

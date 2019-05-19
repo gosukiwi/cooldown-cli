@@ -1,4 +1,4 @@
-var GistStore, codes, sha1, store;
+var GistStore, commonLanguageExtensions, sha1, store;
 
 ({GistStore} = require("../gist-store"));
 
@@ -6,15 +6,14 @@ sha1 = require('sha1');
 
 store = new GistStore("gosukiwi");
 
-codes = {
+commonLanguageExtensions = {
   actionscript3: 'as',
-  asp: 'asp',
-  c: 'c',
   clojure: 'clj',
   coffeescript: 'coffee',
   csharp: 'cs',
   bash: 'sh',
   javascript: 'js',
+  typescript: 'ts',
   markdown: 'md',
   python: 'py',
   ruby: 'rb'
@@ -26,7 +25,7 @@ exports.GistSnippets = {
       var extension, info_words, language, options;
       info_words = node.info ? node.info.split(/\s+/) : [];
       language = info_words[0];
-      extension = (codes != null ? codes[language] : void 0) || language;
+      extension = (commonLanguageExtensions != null ? commonLanguageExtensions[language] : void 0) || language;
       sha1 = sha1(node.literal);
       options = {
         description: "Demo from node",

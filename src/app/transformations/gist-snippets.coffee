@@ -2,16 +2,14 @@
 sha1 = require('sha1')
 
 store = new GistStore("gosukiwi")
-
-codes =
+commonLanguageExtensions =
   actionscript3: 'as'
-  asp: 'asp'
-  c: 'c'
   clojure: 'clj'
   coffeescript: 'coffee'
   csharp: 'cs'
   bash: 'sh'
   javascript: 'js'
+  typescript: 'ts'
   markdown: 'md'
   python: 'py'
   ruby: 'rb'
@@ -21,7 +19,7 @@ exports.GistSnippets =
     enter: (node) ->
       info_words = if node.info then node.info.split(/\s+/) else []
       language   = info_words[0]
-      extension  = codes?[language] or language
+      extension  = commonLanguageExtensions?[language] or language
       sha1       = sha1(node.literal)
       options    =
         description: "Demo from node",
