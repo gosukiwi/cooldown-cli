@@ -23,7 +23,7 @@ exports.default = function (transformation) {
 Then simply run:
 
 ```bash
-$ cooldown src/\*.md dst/
+$ cooldown -i *.md
 ```
 
 And markdown looking like this:
@@ -51,6 +51,9 @@ Another paragraph. There is some code below:
 
 <script...></script>
 ```
+
+The new version will live in `./out/my-original-file.md` by default. Run
+`--help` for  more info on the CLI.
 
 ## Customizing the `cooldown.js` file
 At it's core, the `cooldown.js` file is just a regular JavaScript file which
