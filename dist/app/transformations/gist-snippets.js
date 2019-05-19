@@ -1,13 +1,8 @@
-//{ GistsStore } = require("../stores/gists-store")
-var commonLanguageExtensions, store;
+var Gist, extensions;
 
-store = {
-  create: function() {
-    return true;
-  }
-};
+({Gist} = require("../models/gist"));
 
-commonLanguageExtensions = {
+extensions = {
   actionscript3: 'as',
   clojure: 'clj',
   coffeescript: 'coffee',
@@ -17,28 +12,32 @@ commonLanguageExtensions = {
   typescript: 'ts',
   markdown: 'md',
   python: 'py',
-  ruby: 'rb'
+  ruby: 'rb',
+  text: 'txt'
 };
 
-exports.GistSnippets = {
-  code_block: {
-    enter: function(node) {
-      var extension, info_words, language, options;
-      info_words = node.info ? node.info.split(/\s+/) : [];
-      language = info_words[0];
-      extension = (commonLanguageExtensions != null ? commonLanguageExtensions[language] : void 0) || language;
-      options = {
-        description: "Demo from node",
-        public: false,
-        files: {
-          [`snippet.${extension}`]: {
-            content: node.literal
-          }
-        }
-      };
-      return store.create(options, function(err, res) {
-        return console.log("GIST:", res);
-      });
-    }
-  }
+exports.GistSnippets = function(store) {
+  return {
+    code_block: {
+      enter: function(node) {
+        var extension, gist, language, ref, ref1;
+        language = (node != null ? (ref = node.info) != null ? (ref1 = ref.split(/\s+/)) != null ? ref1[0] : void 0 : void 0 : void 0) || "text";
+        extension = (extensions != null ? extensions[language] : void 0) || language;
+        gist = new Gist("created with cooldown", {
+          name: `snippet.${extension}`,
+          content: node.literal
+        });
+        return store.create(gist, () => {
+          this.cr();
+          this.put(gist.embedCode());
+          return this.cr();
+        });
+      }
+    },
+    // TODO: This should be run after all the markdown files have been compiled,
+    // for general cleanup.
+    finally: function() {}
+  };
 };
+
+// GistsStore.prune()

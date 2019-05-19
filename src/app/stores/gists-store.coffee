@@ -1,6 +1,3 @@
-# { LocalStorage } = require('node-localstorage')
-# new LocalStorage('./cooldown')
-
 # Let's not create too many gists, they can flood the users' account with
 # garbage.
 #

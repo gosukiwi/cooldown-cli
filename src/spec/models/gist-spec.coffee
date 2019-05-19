@@ -1,4 +1,4 @@
-{ Gist } = require_from_app('stores/gist')
+{ Gist } = require_from_app('models/gist')
 
 describe 'Stores/Gist', ->
   describe '#toJSON', ->

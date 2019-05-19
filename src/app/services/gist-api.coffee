@@ -1,6 +1,6 @@
 superagent = require('superagent')
 
-exports.Client = class
+exports.GistAPI = class
   constructor: (credentials) ->
     @credentials = credentials
 

@@ -2,7 +2,7 @@ var Gist, GistsStore, MemoryStorage;
 
 ({GistsStore} = require_from_app('stores/gists-store'));
 
-({Gist} = require_from_app('stores/gist'));
+({Gist} = require_from_app('models/gist'));
 
 MemoryStorage = class MemoryStorage {
   constructor() {

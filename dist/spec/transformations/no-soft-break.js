@@ -1,8 +1,8 @@
 var MarkdownRenderer, NoSoftBreak, RendererWithTransformations, commonmark;
 
-({MarkdownRenderer} = require_from_app('vendor/extensions/commonmark/markdown-renderer'));
+({MarkdownRenderer} = require_from_app('renderers/markdown-renderer'));
 
-({RendererWithTransformations} = require_from_app('renderer-with-transformations'));
+({RendererWithTransformations} = require_from_app('renderers/renderer-with-transformations'));
 
 ({NoSoftBreak} = require_from_app('transformations/no-soft-break'));
 

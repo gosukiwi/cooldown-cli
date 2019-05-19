@@ -1,4 +1,4 @@
-{ RendererWithTransformations } = require_from_app('renderer-with-transformations')
+{ RendererWithTransformations } = require_from_app('renderers/renderer-with-transformations')
 
 timesRun = 0
 dummyAstWalker = ->

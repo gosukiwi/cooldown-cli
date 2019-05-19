@@ -1,10 +1,10 @@
-# { Client } = require_from_app('services/gist/client')
+# { GistAPI } = require_from_app('services/gist-api')
 #
-# describe 'Services/Gist/Client', ->
+# describe 'Services/Gist/GistAPI', ->
 #   @timeout 20000
 #
 #   it "creates a new gist", (done) ->
-#     client = new Client(username: "gosukiwi", password: process.env.GITHUB_TOKEN)
+#     client = new GistAPI(username: "gosukiwi", password: process.env.GITHUB_TOKEN)
 #     options =
 #       description: "Demo from node",
 #       public: false,

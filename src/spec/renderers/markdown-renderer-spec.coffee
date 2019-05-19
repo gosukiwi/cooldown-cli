@@ -1,5 +1,5 @@
 commonmark = require('commonmark')
-{ MarkdownRenderer } = require_from_app('vendor/extensions/commonmark/markdown-renderer')
+{ MarkdownRenderer } = require_from_app('renderers/markdown-renderer')
 
 parser   = new commonmark.Parser()
 renderer = new MarkdownRenderer()
