@@ -1,13 +1,30 @@
-# Cooldown - Style and automate your markdown!
-Cooldown allows you to transform markdown files so they all follow the same
-rules.
+# Cooldown - Normalize your markdown! 😎
+Cooldown allows you to transform markdown files so they all look the same. It's
+an automation CLI tool - available on `npm` - which will do the repetitive work
+of formatting and adjusting markdown for you. At it's core, it's an extendable
+markdown transpiler.
 
-It could be considered a compiler, or a linter which auto-fixes issues. The
-whole  idea behind Cooldown is simply being able to generate standard markdown
-files.
+Cooldown is all about applying _transformations_ to markdown files. Simply
+plug-in the transformations you want in `coolfile.js`, and run `cooldown -i
+*.md`.
 
-Additionally, you can apply transformations to the markdown, for example, you
-can replace all code snippets with gist embed codes.
+# Why
+Markdown is great. But if you use it a lot, across different platforms, you'll
+find inconsistencies.
+
+Sometimes, this is not a big deal, GitLab and GitHub parse markdown in almost
+the same way. But WordPress doesn't like soft-breaks, and it will translate a
+single line-break as a new paragraph, which totally breaks compatibility.
+
+Even if your markdown doesn't break, you might want to systematically apply some
+changes to it, for example, when moving from GitLab to WordPress, you might want
+to swap all the code blocks with [Gist](https://gist.github.com) embeds.
+
+For cases like that, `Cooldown` was created. It's an automation tool which will
+do the repetitive work of formatting and adjusting markdown for you.
+
+You can even plug-it into `gulp` and normalize all your files as you write if
+you ever want that workflow.
 
 # Usage
 `coolfile.js`:
@@ -16,17 +33,17 @@ exports.default = function (transformation) {
   return [
     transformation('NoSoftBreak'),
     transformation('NoEmptyLineAfterHeading')
-  ];
+  ]
 }
 ```
 
-Then simply run:
+Then run:
 
 ```bash
 $ cooldown -i *.md
 ```
 
-And markdown looking like this:
+That's it! Now markdown looking like this:
 
 ```markdown
 # A title
@@ -35,42 +52,90 @@ A paragraph with a long sentence which is
 broken in two lines.
 
 Another paragraph. There is some code below:
-
-```ruby
-some = "code"
 ```
 
-Will be translated to:
+Will be transpiled to:
 
 ```markdown
 # A title
-
 A paragraph with a long sentence which is broken in two lines.
 
 Another paragraph. There is some code below:
-
-<script...></script>
 ```
 
 The new version will live in `./out/my-original-file.md` by default. Run
-`--help` for  more info on the CLI.
+`--help` for more info on the CLI.
 
-## Customizing the `cooldown.js` file
-At it's core, the `cooldown.js` file is just a regular JavaScript file which
-exports a function.
+# The `cooldown.js` file
+The _coolfile_ is just a regular JavaScript file which exports a function. The
+exported function takes a `transformations` function as argument, which is used
+to retrieve built-in transformations. Our exported function must return an array
+of transformations.
 
-The exported function takes a `transformation` function as argument, which is
-used to retrieve built-in transformations, and it must return an array of
-transformations.
+An empty coolfile would look like this:
 
-You can define your own transformations as such:
+```javascript
+exports.default = function (transformations) {
+  return [
+    // transformations('SomeTransformationName')
+  ]
+}
+```
 
+# Available Transformations
+Below are all the buil-in transformations.
+
+## NoSoftBreak
+No parameters. Use space as soft-break, so there are no line-breaks in
+paragraphs.
+
+Example usage:
+
+```javascript
+exports.default = function (transformation) {
+  return [
+    // ...
+    transformation('NoSoftBreak')
+  ];
+}
+```
+
+## GistSnippet
+This transformations takes a credentials object as parameter:
+
+```javascript
+{
+  username: "...",
+  password: "..."
+}
+```
+
+In the object above, `username` is your GitHub username, and `password` is a
+[personal API token](https://github.blog/2013-05-16-personal-api-tokens/). Make
+sure the token has access to your gists!
+
+Because storing sensitive information like that in code is not a very good idea,
+consider using an environmental variable to store your token.
+
+Example usage:
 ```javascript
 credentials = {
   username: 'my-github-username',
-  password: process.env.GITHUB_TOKEN // https://github.blog/2013-05-16-personal-api-tokens/
+  password: process.env.GITHUB_TOKEN
 }
 
+exports.default = function (transformation) {
+  return [
+    // ...
+    transformation('GistSnippet', credentials)
+  ];
+}
+```
+
+# Custom Transformations
+You can define your own transformations as such:
+
+```javascript
 const myCustomTransformation = {
   paragraph: {
     enter: function (node, entering) {
@@ -81,7 +146,6 @@ const myCustomTransformation = {
 
 exports.default = function (transformation) {
   return [
-    transformation('GistSnippet', credentials),
     transformation('NoSoftBreak'),
     myCustomTransformation
   ];
@@ -103,51 +167,19 @@ exports.default = function (transformation) {
 
 If you do create a package, please let me know so I can list it here!
 
-## Creating Custom Transformations
-A transformation is a function which writes what a node means in certain
-context. For example, if we are talking about markdown, when a node looks like
-this:
+## How filters interact with renderers
+Filters are used by renderers. To write filters, let's look at the life-cycle of
+a renderer.
 
-```json
-{
-  "type": "text",
-  "literal": "Hello, World!"
-}
-```
+A renderer is an object which takes a tree data-structure and implements a
+[Visitor Pattern](https://en.wikipedia.org/wiki/Visitor_pattern) to traverse the
+tree.
 
-We most likely just want to translate it to plain text. We could do it like
-this:
+It will visit all the nodes and call a method for each node type. So for node
+type `paragraph`, it will call `renderer#paragraph`.
 
-```javascript
-const PlainText = {
-  text: { // <-- `text` was the node type
-    enter: function(node) {
-      this.put(node.literal);
-    }
-  }
-}
-```
-
-That would write the `Hello, World!` text to the output, which is what we want
-in this case.
-
-The `put` function belongs to the `renderer` object. A `renderer` is an object
-which takes some nodes and produces output.
-
-Some example renders are `HtmlRenderer` and `MarkdownRenderer`. They translate
-nodes into HTML and Markdown, respectively.
-
-As you might have guessed, all transformations are applied to a
-`MarkdownRenderer`.
-
-### How Renderers Work
-A renderer takes a tree data-structure and implements some kind of [Visitor
-Pattern](https://en.wikipedia.org/wiki/Visitor_pattern) to traverse the tree.
-
-So a renderer will define a method for each possible node type, and each method
-write whatever that node translates as.
-
-Here is a snippet of the `MarkdownRenderer`:
+A renderer looks something like this: (taken from
+`./src/app/renderers/markdown-renderer.coffee`):
 
 ```coffee
 exports.MarkdownRenderer = class extends Renderer
@@ -165,19 +197,13 @@ exports.MarkdownRenderer = class extends Renderer
       "#{node.title}](#{node.destination})"
 ```
 
-`emph`, `strong` and `link` are all node types. Note that each method takes a
-`node` and an `entering` flag, which will let you know if we are entering the
-node or leaving it.
+In the snippet above, `emph`, `strong` and `link` are all node types.  
 
-This is because the node is using a depth-first traversal, called [Postorder
-Traversal](https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/).
+Each method takes a `node` and an `entering` flag. The flag is used because the
+node is visited twice, one when entering, and one when leaving.
 
-Each time a node is visited, a visitor method is called. Also, a visitor method
-is called every time a node is left. So we have two method calls per node, one
-when entering, one when leaving.
-
-The transformation objects reflect this structure, and they define their own
-`enter` and `leave` methods which will be used for this purpose.
+The transformation objects reflect this structure with the `enter` and `leave`
+methods.
 
 ```javascript
 const PlainText = {
@@ -188,27 +214,37 @@ const PlainText = {
 
     leave: function (node) {
       // do something... or not
-      // note that this will override the default behaviour!
-      // if you want to invoke the default behaviour you can do
-      // this.text(node, false); // or true if this is `entering`
     }
   }
 }
 ```
 
-Sometimes, nodes cannot contain children, in that case, the `leave` method will
-never be called, only the `enter` method will.
+So when that transformation is plugged-in,
+      // note that this will override the renderer's default behaviour!
+      // if you want to invoke the default behaviour you can do
+      // this.text(node, false); // or true in the enter method
 
-### Node types
-Here's a list of all possible node types: `text`, `softbreak`, `linebreak`,
-`emph`, `strong`, `html_inline`, `link`, `image`, `code`, `document`,
-`paragraph`, `block_quote`, `item`, `list`, `heading`, `code_block`,
-`html_block`, `thematic_break`.
+Note that sometimes, nodes cannot contain children, in that case, the `leave`
+method will never be called, only the `enter` method will.
+
+## Writing to the output buffer
+You can use the following methods inside your `enter` and `leave` functions to
+write to the output buffer:
+
+* `put`: Write string to the output buffer
+* `putEscaped`: Escape string for markdown format, and then write it to the output buffer
+* `cr`: Write a new line. If the last added character to the string was a new line, this will do nothing.
+
+## Node types
+These are all possible node types: `text`, `softbreak`, `linebreak`, `emph`,
+`strong`, `html_inline`, `link`, `image`, `code`, `document`, `paragraph`,
+`block_quote`, `item`, `list`, `heading`, `code_block`, `html_block`,
+`thematic_break`.
 
 See `src/app/vendor/extensions/commonmark/markdown-renderer.coffee` to know the
 details of the `MarkdownRenderer`.
 
-### Programmatic Usage
+# Programmatic usage
 You can use Cooldown programmatically as such:
 
 ```javascript
@@ -244,4 +280,6 @@ $ gulp
 Remember to run `npm install` before running `gulp` for the first time.
 
 ## Specs
-Specs live in `src/spec/`.
+Specs live in `src/spec/`. To run specs:
+
+    $ npm test
