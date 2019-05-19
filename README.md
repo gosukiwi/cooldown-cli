@@ -56,7 +56,7 @@ Another paragraph. There is some code below:
 You can define your own transformations as such:
 
 ```javascript
-myCustomTransformation = {
+const myCustomTransformation = {
   paragraph: {
     enter: function (node, entering) {
       this.put("A paragraph");
@@ -76,7 +76,7 @@ exports.default = function (transformation) {
 If interested, `npm` packages can be created to share your transformations:
 
 ```javascript
-someCoolTransformation = require('cooldown-coolstuff')
+const someCoolTransformation = require('cooldown-coolstuff')
 
 exports.default = function (transformation) {
   return [
@@ -89,32 +89,113 @@ exports.default = function (transformation) {
 
 If you do create a package, please let me know so I can list it here!
 
-### Renderer
-Note that the function is evaluated in the context of a `MarkdownRenderer`. This
-means that you get some helper functions like `put` and `cr`.
+### Transformations
+A transformation is a function which writes what a node means in certain
+context. For example, if we are talking about markdown, when a node looks like
+this:
 
-This also means that you can define instance variables across functions and use
-them to  orchestrate your transformations, if you ever have that need.
+```json
+{
+  "type": "text",
+  "literal": "Hello, World!"
+}
+```
 
-> NOTE: I have to admit that while this extremely mutable design is not great,
-> it was the easiest to use, because AST data structure uses a `walker` to
-> traverse  the tree. Maybe in a future version, I'll write an immutable
-> version.
+We most likely just want to translate it to plain text. We could do it like
+this:
 
-A transformation is simply an object which can be used to evaluate what output
-should a node type have.
+```javascript
+const PlainText = {
+  text: { // <-- `text` was the node type
+    enter: function(node) {
+      this.put(node.literal);
+    }
+  }
+}
+```
 
-For example, for a `paragraph` node, you'll want to do nothing when entering,
-and add two new line characters when leaving. You can add characters by using
-`put`.
+That would write the `Hello, World!` text to the output, which is what we want
+in this case.
 
+The `put` function belongs to the `renderer` object. A `renderer` is an object
+which takes some nodes and produces output.
+
+Some example renders are `HtmlRenderer` and `MarkdownRenderer`. They translate
+nodes into HTML and Markdown, respectively.
+
+As you might have guessed, all transformations are applied to a
+`MarkdownRenderer`.
+
+### How Renderers Work
+A renderer takes a tree data-structure and implements some kind of [Visitor
+Pattern](https://en.wikipedia.org/wiki/Visitor_pattern) to traverse the tree.
+
+So a renderer will define a method for each possible node type, and each method
+write whatever that node translates as.
+
+Here is a snippet of the `MarkdownRenderer`:
+
+```coffee
+exports.MarkdownRenderer = class extends Renderer
+  # ...
+  emph: (node, entering) ->
+    @put '_'
+
+  strong: (node, entering) ->
+    @put '**'
+
+  link: (node, entering) ->
+    @put if entering
+      "["
+    else
+      "#{node.title}](#{node.destination})"
+```
+
+`emph`, `strong` and `link` are all node types. Note that each method takes a
+`node` and an `entering` flag, which will let you know if we are entering the
+node or leaving it.
+
+This is because the node is using a depth-first traversals, called Preorder
+Traversal. You can check it out
+[here](https://www.geeksforgeeks.org/bfs-vs-dfs-binary-tree/) if you don't know
+what I'm talking about or want a quick refresher.
+
+The tree will be visited, starting from the root, down into the first child and
+repeating until the first leaf (node without a child) is found. When it finds a
+leaf, it finds all siblings before going up and repeating.
+
+Each time a node is visited, a visitor method is called. Also, a visitor method
+is called every time a node is left. So we have two method calls per node, one
+when entering, one when leaving.
+
+The transformation objects reflect this structure, and they define their own
+`enter` and `leave` methods which will be used for this purpose.
+
+```javascript
+const PlainText = {
+  text: { // <-- `text` was the node type
+    enter: function(node) {
+      this.put(node.literal);
+    },
+
+    leave: function (node) {
+      // do something... or not
+      // note that this will override the default behaviour!
+      // if you want to invoke the default behaviour you can do
+      // this.text(node, false); // or true if this is `entering`
+    }
+  }
+}
+```
+
+### Node types
 Here's a list of all possible node types: `text`, `softbreak`, `linebreak`,
 `emph`, `strong`, `html_inline`, `link`, `image`, `code`, `document`,
 `paragraph`, `block_quote`, `item`, `list`, `heading`, `code_block`,
 `html_block`, `thematic_break`.
 
 See `src/app/vendor/extensions/commonmark/markdown-renderer.coffee` to know the
-details of how the renderer works.
+details of the `MarkdownRenderer`.
 
 # Developers
 The application code lives in `src/app`. This application uses `gulp` and
