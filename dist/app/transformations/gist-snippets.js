@@ -1,10 +1,13 @@
-var GistStore, commonLanguageExtensions, sha1, store;
-
-({GistStore} = require("../gist-store"));
+//{ GistsStore } = require("../stores/gists-store")
+var commonLanguageExtensions, sha1, store;
 
 sha1 = require('sha1');
 
-store = new GistStore("gosukiwi");
+store = {
+  create: function() {
+    return true;
+  }
+};
 
 commonLanguageExtensions = {
   actionscript3: 'as',

@@ -1,7 +1,9 @@
 { Client } = require_from_app('services/gist/client')
 { Credentials } = require_from_app('services/gist/credentials')
 
-describe 'Client', ->
+describe 'Services/Gist/Client', ->
+  @timeout 20000
+
   it "creates a new gist", (done) ->
     credentials = new Credentials("gosukiwi", process.env.GITHUB_TOKEN)
     client = new Client(credentials)

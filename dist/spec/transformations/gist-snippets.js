@@ -15,6 +15,7 @@ describe('Transformations/GistSnippets', function() {
     renderer = new RendererWithTransformations(new MarkdownRenderer(), [GistSnippets]);
     parser = new commonmark.Parser();
     ast = parser.parse(given);
-    return expect(renderer.render(ast)).to.equal("This is a sentence.\n\n");
+    // TODO: Test actual script URL eventually
+    return expect(renderer.render(ast)).to.equal("");
   });
 });

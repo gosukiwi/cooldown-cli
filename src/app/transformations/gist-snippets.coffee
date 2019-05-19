@@ -1,7 +1,10 @@
-{ GistStore } = require("../gist-store")
+#{ GistsStore } = require("../stores/gists-store")
 sha1 = require('sha1')
 
-store = new GistStore("gosukiwi")
+store =
+  create: ->
+    true
+
 commonLanguageExtensions =
   actionscript3: 'as'
   clojure: 'clj'

@@ -14,4 +14,5 @@ describe 'Transformations/GistSnippets', ->
     parser   = new commonmark.Parser()
     ast      = parser.parse(given)
 
-    expect(renderer.render(ast)).to.equal("This is a sentence.\n\n")
+    # TODO: Test actual script URL eventually
+    expect(renderer.render(ast)).to.equal("")

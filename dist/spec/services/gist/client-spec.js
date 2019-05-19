@@ -4,7 +4,8 @@ var Client, Credentials;
 
 ({Credentials} = require_from_app('services/gist/credentials'));
 
-describe('Client', function() {
+describe('Services/Gist/Client', function() {
+  this.timeout(20000);
   return it("creates a new gist", function(done) {
     var client, credentials, options;
     credentials = new Credentials("gosukiwi", process.env.GITHUB_TOKEN);
