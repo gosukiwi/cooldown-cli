@@ -208,6 +208,24 @@ Here's a list of all possible node types: `text`, `softbreak`, `linebreak`,
 See `src/app/vendor/extensions/commonmark/markdown-renderer.coffee` to know the
 details of the `MarkdownRenderer`.
 
+### Programmatic Usage
+You can use Cooldown programmatically as such:
+
+```javascript
+const { Cooldown, Compiler, coolfile } = require('cooldown')
+const transformations = coolfile('./coolfile.js')
+const compiler = new Compiler(transformations)
+const cooldown = new Cooldown('./src/*.md', './out', compiler)
+
+cooldown.run()
+```
+
+You can test the output with `Compiler#compile`:
+
+```javascript
+compiler.compile("Some _markdown_ **here**")
+```
+
 # Developers
 The application code lives in `src/app`. This application uses `gulp` and
 CofeeScript. You can install gulp with:

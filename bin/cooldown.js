@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-const { Cooldown } = require('../dist/app/cooldown')
+const { Application } = require('../dist/app/application')
+const { Compiler } = require('../dist/app/compiler')
 const { ERROR_CODES } = require('../dist/app/error-codes')
 const commander = require('commander')
 const program   = new commander.Command()
@@ -14,19 +15,24 @@ const options = program
   .parse(process.argv)
   .opts()
 
-// Get coolfile
+// build compiler using coolfile
+let compiler = null
 try {
   const transformations = coolfile(options.coolfile)
-  console.log('[DEBUG] Transformations: ', transformations)
+  if(!Array.isArray(transformations)) {
+    console.log(`Invalid coolfile, '${options.coolfile}' must export an array.`)
+    process.exit(1)
+  }
+
+  compiler = new Compiler(transformations)
 } catch (e) {
   console.log(`Could not find '${options.coolfile}'.`)
-  process.exit(1)
+  throw e
 }
 
-// Run cooldown
+// start application!
 try {
-  const cooldown = new Cooldown(options.input, options.output)
-  cooldown.run()
+  new Application(options.input, options.output, compiler).run()
 } catch(e) {
   switch(+e.message) {
     case ERROR_CODES.INVALID_INPUT:
@@ -38,7 +44,6 @@ try {
       console.log('Run `cooldown --help` for more info.')
       break
     default:
-      console.log("Error not caught", e.message)
-      console.log("This should be reported as a bug.")
+      throw e
   }
 }
