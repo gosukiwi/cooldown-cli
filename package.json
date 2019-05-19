@@ -4,7 +4,8 @@
   "description": "Preprocess markdown files",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive --file ./dist/spec/spec_helper.js ./dist/spec"
+    "test": "mocha --recursive --file ./dist/spec/spec_helper.js ./dist/spec",
+    "itest": "mocha --inspect --recursive --file ./dist/spec/spec_helper.js ./dist/spec"
   },
   "keywords": [
     "preprocessor",

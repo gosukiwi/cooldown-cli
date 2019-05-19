@@ -3,39 +3,30 @@ var sha1;
 sha1 = require('sha1');
 
 exports.Gist = class {
-  constructor(description, isPublic) {
+  constructor(description, file, isPublic) {
     if (description === void 0) {
-      raise(new Error("Gist must have a description"));
+      throw new Error("Gist must have a description");
+    }
+    if (file === void 0) {
+      throw new Error("Gist must have a file");
     }
     this.description = description;
     this.public = isPublic || false;
-    this.files = [];
-  }
-
-  // file looks like this: `{ name: name, content: content }`
-  file(file) {
-    this.files.push(file);
-    return this;
+    this.file = file; // { name: "...", content: "..." }
+    this.id = null;
+    this.url = null;
   }
 
   toHash() {
-    var file, hash, i, len, ref;
-    if (this.files.length === 0) {
-      raise(new Error("Gist must have files"));
-    }
-    hash = {
+    return {
       description: this.description,
       public: this.public,
-      files: {}
+      files: {
+        [`${this.file.name}`]: {
+          content: this.file.content
+        }
+      }
     };
-    ref = this.files;
-    for (i = 0, len = ref.length; i < len; i++) {
-      file = ref[i];
-      hash.files[file.name] = {
-        content: file.content
-      };
-    }
-    return hash;
   }
 
   toJSON() {
@@ -44,6 +35,13 @@ exports.Gist = class {
 
   cacheKey() {
     return sha1(this.toJSON());
+  }
+
+  embedCode() {
+    if (this.url === null) {
+      throw new Error("Gist must have an URL in order to be embedded");
+    }
+    return `<script src='${this.url}.js'></script>`;
   }
 
 };

@@ -1,33 +1,28 @@
 sha1 = require('sha1')
 
 exports.Gist = class
-  constructor: (description, isPublic) ->
-    raise new Error("Gist must have a description") if description is undefined
+  constructor: (description, file, isPublic) ->
+    throw new Error("Gist must have a description") if description is undefined
+    throw new Error("Gist must have a file") if file is undefined
     @description = description
     @public      = isPublic or no
-    @files       = []
-
-  # file looks like this: `{ name: name, content: content }`
-  file: (file) ->
-    @files.push file
-    this
+    @file        = file # { name: "...", content: "..." }
+    @id          = null
+    @url         = null
 
   toHash: ->
-    raise new Error("Gist must have files") if @files.length is 0
-
-    hash =
-      description: @description
-      public: @public
-      files: {}
-
-    for file in @files
-      hash.files[file.name] =
-        content: file.content
-
-    hash
+    description: @description
+    public: @public
+    files:
+      "#{@file.name}":
+        content: @file.content
 
   toJSON: ->
     JSON.stringify @toHash()
 
   cacheKey: ->
     sha1 @toJSON()
+
+  embedCode: ->
+    throw new Error("Gist must have an URL in order to be embedded") if @url is null
+    "<script src='#{@url}.js'></script>"

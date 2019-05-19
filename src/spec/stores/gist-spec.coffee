@@ -3,8 +3,10 @@
 describe 'Stores/Gist', ->
   describe '#toJSON', ->
     it "generates proper JSON", ->
-      gist = new Gist("a description", false)
-      gist.file name: "demo.rb", content: "a = 1"
+      file =
+        name: "demo.rb"
+        content: "a = 1"
+      gist = new Gist("a description", file, false)
 
       json = JSON.parse(gist.toJSON())
 

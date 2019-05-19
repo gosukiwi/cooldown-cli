@@ -23,8 +23,15 @@ exports.GistsStore = class {
       }
       return this;
     }
-    this.storage.setItem(key, gist);
-    this.client.create(gist.toHash(), function(err, res) {
+    this.client.create(gist.toHash(), (err, res) => {
+      var response;
+      if (err) {
+        throw new Error("Invalid request");
+      }
+      response = res.body;
+      gist.id = response.id;
+      gist.url = response.html_url;
+      this.storage.setItem(key, gist);
       return typeof callback === "function" ? callback(gist) : void 0;
     });
     return this;

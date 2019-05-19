@@ -19,8 +19,12 @@ exports.GistsStore = class
       callback?(cached)
       return this
 
-    @storage.setItem(key, gist)
-    @client.create gist.toHash(), (err, res) ->
+    @client.create gist.toHash(), (err, res) =>
+      throw new Error("Invalid request") if err
+      response = res.body
+      gist.id  = response.id
+      gist.url = response.html_url
+      @storage.setItem(key, gist)
       callback?(gist)
 
     this

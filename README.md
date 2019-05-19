@@ -14,8 +14,8 @@ can replace all code snippets with gist embed codes.
 ```javascript
 exports.default = function (transformation) {
   return [
-    transformation('GistSnippet'),
-    transformation('NoSoftBreak')
+    transformation('NoSoftBreak'),
+    transformation('NoEmptyLineAfterHeading')
   ];
 }
 ```
@@ -52,10 +52,22 @@ Another paragraph. There is some code below:
 <script...></script>
 ```
 
-## Configuration
+## Customizing the `cooldown.js` file
+At it's core, the `cooldown.js` file is just a regular JavaScript file which
+exports a function.
+
+The exported function takes a `transformation` function as argument, which is
+used to retrieve built-in transformations, and it must return an array of
+transformations.
+
 You can define your own transformations as such:
 
 ```javascript
+credentials = {
+  username: 'my-github-username',
+  password: process.env.GITHUB_TOKEN // https://github.blog/2013-05-16-personal-api-tokens/
+}
+
 const myCustomTransformation = {
   paragraph: {
     enter: function (node, entering) {
@@ -66,7 +78,7 @@ const myCustomTransformation = {
 
 exports.default = function (transformation) {
   return [
-    transformation('GistSnippet'),
+    transformation('GistSnippet', credentials),
     transformation('NoSoftBreak'),
     myCustomTransformation
   ];
@@ -80,7 +92,6 @@ const someCoolTransformation = require('cooldown-coolstuff')
 
 exports.default = function (transformation) {
   return [
-    transformation('GistSnippet'),
     transformation('NoSoftBreak'),
     someCoolTransformation
   ];
@@ -89,7 +100,7 @@ exports.default = function (transformation) {
 
 If you do create a package, please let me know so I can list it here!
 
-### Transformations
+## Creating Custom Transformations
 A transformation is a function which writes what a node means in certain
 context. For example, if we are talking about markdown, when a node looks like
 this:
