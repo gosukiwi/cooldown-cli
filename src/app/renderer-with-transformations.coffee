@@ -39,11 +39,11 @@ exports.RendererWithTransformations = class
     (@run(transformation, node, entering) for transformation in @transformations).some(Boolean)
 
   run: (transformation, node, entering) ->
-    return false unless transformation[node.type]
+    return false unless transformation?[node.type]
 
     action = if entering then 'enter' else 'leave'
     if transformation[node.type][action]
-      transformation[node.type][action].apply @renderer, node
+      transformation[node.type][action].call(@renderer, node)
       true
     else
       false

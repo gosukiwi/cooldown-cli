@@ -155,14 +155,8 @@ exports.MarkdownRenderer = class extends Renderer
 `node` and an `entering` flag, which will let you know if we are entering the
 node or leaving it.
 
-This is because the node is using a depth-first traversals, called Preorder
-Traversal. You can check it out
-[here](https://www.geeksforgeeks.org/bfs-vs-dfs-binary-tree/) if you don't know
-what I'm talking about or want a quick refresher.
-
-The tree will be visited, starting from the root, down into the first child and
-repeating until the first leaf (node without a child) is found. When it finds a
-leaf, it finds all siblings before going up and repeating.
+This is because the node is using a depth-first traversal, called [Postorder
+Traversal](https://www.geeksforgeeks.org/tree-traversals-inorder-preorder-and-postorder/).
 
 Each time a node is visited, a visitor method is called. Also, a visitor method
 is called every time a node is left. So we have two method calls per node, one
@@ -187,6 +181,9 @@ const PlainText = {
   }
 }
 ```
+
+Sometimes, nodes cannot contain children, in that case, the `leave` method will
+never be called, only the `enter` method will.
 
 ### Node types
 Here's a list of all possible node types: `text`, `softbreak`, `linebreak`,

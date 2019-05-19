@@ -56,12 +56,12 @@ exports.RendererWithTransformations = class {
 
   run(transformation, node, entering) {
     var action;
-    if (!transformation[node.type]) {
+    if (!(transformation != null ? transformation[node.type] : void 0)) {
       return false;
     }
     action = entering ? 'enter' : 'leave';
     if (transformation[node.type][action]) {
-      transformation[node.type][action].apply(this.renderer, node);
+      transformation[node.type][action].call(this.renderer, node);
       return true;
     } else {
       return false;

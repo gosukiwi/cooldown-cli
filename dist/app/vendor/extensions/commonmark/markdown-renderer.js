@@ -88,7 +88,7 @@ exports.MarkdownRenderer = class extends Renderer {
     }
   }
 
-  code_block(node) {
+  code_block(node, entering) {
     var info_words, language;
     info_words = node.info ? node.info.split(/\s+/) : [];
     language = info_words[0] || "";

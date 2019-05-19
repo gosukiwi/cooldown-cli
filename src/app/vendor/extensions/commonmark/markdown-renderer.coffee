@@ -69,7 +69,7 @@ exports.MarkdownRenderer = class extends Renderer
       @cr()
       @put "\n" if @options.emptyLineAfterHeadings
 
-  code_block: (node) ->
+  code_block: (node, entering) ->
     info_words = if node.info then node.info.split(/\s+/) else []
     language = info_words[0] || ""
     @put "```#{language}"
