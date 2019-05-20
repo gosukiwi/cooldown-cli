@@ -1,6 +1,6 @@
-var GistAPI, request;
+var GistService, request;
 
-({GistAPI} = require_from_app('services/gist-api'));
+({GistService} = require_from_app('services/gist-service'));
 
 request = {
   post: function(url, credentials, params, callback) {
@@ -10,14 +10,14 @@ request = {
   }
 };
 
-describe('Services/Gist/GistAPI', function() {
+describe('Services/Gist/GistService', function() {
   return it("creates a new gist", function(done) {
     var client, credentials, params;
     credentials = {
       username: "gosukiwi",
       password: process.env.GITHUB_TOKEN
     };
-    client = new GistAPI(request, credentials);
+    client = new GistService(request, credentials);
     params = {
       description: "Demo from node",
       public: false,

@@ -2,7 +2,7 @@
 
 const { Application } = require('../dist/app/application')
 const { Compiler } = require('../dist/app/compiler')
-const { reportError } = require('../dist/app/error-codes')
+const { reportError } = require('../dist/app/errors')
 const commander = require('commander')
 const program   = new commander.Command()
 const coolfile = require('../dist/app/coolfile')

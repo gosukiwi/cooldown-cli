@@ -13,7 +13,7 @@ extensions =
   ruby: 'rb'
   text: 'txt'
 
-exports.GistSnippets = (store) ->
+exports.RemoteCodeBlocks = (store) ->
   code_block:
     enter: (node, done) ->
       language  = node?.info?.split(/\s+/)?[0] or "text"
@@ -27,4 +27,4 @@ exports.GistSnippets = (store) ->
   # TODO: This should be run after all the markdown files have been compiled,
   # for general cleanup.
   # finally: ->
-  #   GistsStore.prune()
+  #   GistStore.prune()

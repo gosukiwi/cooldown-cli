@@ -6,7 +6,7 @@
 # Let's make sure that we have some kind of control over the gists so we don't
 # repeat them too much, and also delete/update when possible.
 #
-exports.GistsStore = class
+exports.GistStore = class
   constructor: (client, storage) ->
     @client = client
     @storage = storage

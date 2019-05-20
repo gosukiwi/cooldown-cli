@@ -10,10 +10,10 @@ fixture = function(name) {
 
 TRANSFORMATIONS = {
   NoSoftBreak: 'no-soft-break',
-  GistSnippets: function(p) {
+  RemoteCodeBlocks: function(p) {
     return p;
   },
-  GistsStore: function() {
+  GistStore: function() {
     return 'a-fake-store';
   }
 };

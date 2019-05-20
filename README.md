@@ -104,22 +104,10 @@ exports.default = function (load) {
 }
 ```
 
-## GistSnippets
-This transformations takes a credentials object as parameter:
-
-```javascript
-{
-  username: "...",
-  password: "..."
-}
-```
-
-In the object above, `username` is your GitHub username, and `password` is a
-[personal API token](https://github.blog/2013-05-16-personal-api-tokens/). Make
-sure the token has access to your gists!
-
-Because storing sensitive information like that in code is not a very good idea,
-consider using an environmental variable to store your token.
+## RemoteCodeBlocks
+This transformation takes all your code blocks and uploads them to what's called
+a `store`. By default, the only supported store is
+[Gist](https://gist.github.com/), you can get it with `load('GistStore')`.
 
 Example usage:
 ```javascript
@@ -129,14 +117,23 @@ credentials = {
 }
 
 exports.default = function (load) {
-  store = load('GistsStore')(credentials)
+  store = load('GistStore')(credentials)
 
   return [
     // ...
-    load('GistSnippets', store)
+    load('RemoteCodeBlocks', store)
   ];
 }
 ```
+
+Note that the store will need your GitHub `username` as well as a `password`,
+which is  your [personal API
+token](https://github.blog/2013-05-16-personal-api-tokens/). Make sure the token
+has access to your gists!
+
+Because storing sensitive information like that in code is not a good idea,
+consider using an environmental variable to store your token. In the example
+above, we assume we have a variable named `GITHUB_TOKEN`.
 
 # Custom Transformations
 You can define your own transformations as such:
@@ -173,19 +170,17 @@ exports.default = function (load) {
 
 If you do create a package, please let me know so I can list it here!
 
-## How filters interact with renderers
-Filters are used by renderers. To write filters, let's look at the life-cycle of
-a renderer.
+## How filters interact with the `MarkdownRenderer`
+Filters are used by renderers. To write filters, it makes sense to know the
+life-cycle of a renderer.
 
 A renderer is an object which takes a tree data-structure and implements a
 [Visitor Pattern](https://en.wikipedia.org/wiki/Visitor_pattern) to traverse the
 tree.
 
 It will visit all the nodes and call a method for each node type. So for node
-type `paragraph`, it will call `renderer#paragraph`.
-
-A renderer looks something like this: (taken from
-`./src/app/renderers/markdown-renderer.coffee`):
+type `paragraph`, it will call `renderer#paragraph`. A renderer looks something
+like this: (taken from `./src/app/renderers/markdown-renderer.coffee`):
 
 ```coffee
 exports.MarkdownRenderer = class extends Renderer
@@ -225,13 +220,18 @@ const PlainText = {
 }
 ```
 
-So when that transformation is plugged-in,
-      // note that this will override the renderer's default behaviour!
-      // if you want to invoke the default behaviour you can do
-      // this.text(node, false); // or true in the enter method
+It's very important to note that if there is at least one filter which defines a
+method for a node, **the base method will be ignored**. If you want to invoke
+the default behaviour you can do something like:
 
-Note that sometimes, nodes cannot contain children, in that case, the `leave`
-method will never be called, only the `enter` method will.
+```javascript
+enter: function(node) {
+  this.text(node, true); // or `false` if this were in the leave method
+}
+```
+
+Another important thing to know is that not all nodes have children, so the
+`#leave` will not be called in that case.
 
 ## Writing to the output buffer
 You can use the following methods inside your `enter` and `leave` functions to

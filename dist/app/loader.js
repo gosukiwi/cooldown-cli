@@ -1,31 +1,31 @@
-var GistAPI, GistSnippets, GistsStore, LocalStorage, NoSoftBreak, Request, TRANSFORMATIONS, TransformationNotFoundError, UTIL;
+var GistService, GistStore, LocalStorage, NoSoftBreak, RemoteCodeBlocks, RequestService, TRANSFORMATIONS, TransformationNotFoundError, UTIL;
 
-({TransformationNotFoundError} = require('./error-codes'));
+({TransformationNotFoundError} = require('./errors'));
+
+({GistStore} = require("./stores/gist-store"));
+
+({RequestService} = require("./services/request-service"));
+
+({GistService} = require("./services/gist-service"));
+
+({LocalStorage} = require("node-localstorage"));
 
 ({NoSoftBreak} = require('./transformations/no-soft-break'));
 
-({GistSnippets} = require('./transformations/gist-snippets'));
-
-({GistsStore} = require("./stores/gists-store"));
-
-({Request} = require("./services/request"));
-
-({GistAPI} = require("./services/gist-api"));
-
-({LocalStorage} = require("node-localstorage"));
+({RemoteCodeBlocks} = require('./transformations/remote-code-blocks'));
 
 // TODO: See if there's a way transformations can register themselves
 TRANSFORMATIONS = {
   NoSoftBreak: NoSoftBreak,
-  GistSnippets: GistSnippets
+  RemoteCodeBlocks: RemoteCodeBlocks
 };
 
 UTIL = {
-  GistsStore: function(credentials) {
+  GistStore: function(credentials) {
     var client, storage;
-    client = new GistAPI(new Request(), credentials);
+    client = new GistService(new RequestService(), credentials);
     storage = new LocalStorage("./.cooldown-cache");
-    return new GistsStore(client, storage);
+    return new GistStore(client, storage);
   }
 };
 

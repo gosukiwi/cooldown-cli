@@ -1,4 +1,4 @@
-{ GistsStore } = require_from_app('stores/gists-store')
+{ GistStore } = require_from_app('stores/gist-store')
 { Gist } = require_from_app('models/gist')
 
 class MemoryStorage
@@ -11,14 +11,14 @@ class MemoryStorage
   setItem: (key, value) ->
     @storage[key] = value
 
-describe 'Stores/GistsStore', ->
+describe 'Stores/GistStore', ->
   describe '#create', ->
     it "sets the ID and URL", (done) ->
       gist = new Gist('some desc', name: "some-file.rb", content: "foo = 'bar'")
       client =
         create: (_params, callback) ->
           callback(null, body: { id: 1, html_url: "foo" })
-      store = new GistsStore(client, new MemoryStorage())
+      store = new GistStore(client, new MemoryStorage())
 
       store.create gist, (gist) ->
         expect(gist.id).to.equal(1)
@@ -32,7 +32,7 @@ describe 'Stores/GistsStore', ->
           timesCalled += 1
           callback(null, body: { id: 1, html_url: "foo" })
 
-      store = new GistsStore(client, new MemoryStorage())
+      store = new GistStore(client, new MemoryStorage())
       gist  = new Gist('some desc', name: "some-file.rb", content: "foo = 'bar'")
 
       store.create gist, (gist) ->

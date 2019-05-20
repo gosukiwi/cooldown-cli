@@ -1,6 +1,6 @@
 var Compiler, InvalidInputError, async, fs, glob, path;
 
-({InvalidInputError} = require('./error-codes'));
+({InvalidInputError} = require('./errors'));
 
 ({Compiler} = require('./compiler'));
 

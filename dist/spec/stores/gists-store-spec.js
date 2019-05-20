@@ -1,6 +1,6 @@
-var Gist, GistsStore, MemoryStorage;
+var Gist, GistStore, MemoryStorage;
 
-({GistsStore} = require_from_app('stores/gists-store'));
+({GistStore} = require_from_app('stores/gist-store'));
 
 ({Gist} = require_from_app('models/gist'));
 
@@ -19,7 +19,7 @@ MemoryStorage = class MemoryStorage {
 
 };
 
-describe('Stores/GistsStore', function() {
+describe('Stores/GistStore', function() {
   return describe('#create', function() {
     it("sets the ID and URL", function(done) {
       var client, gist, store;
@@ -37,7 +37,7 @@ describe('Stores/GistsStore', function() {
           });
         }
       };
-      store = new GistsStore(client, new MemoryStorage());
+      store = new GistStore(client, new MemoryStorage());
       return store.create(gist, function(gist) {
         expect(gist.id).to.equal(1);
         expect(gist.url).to.equal("foo");
@@ -58,7 +58,7 @@ describe('Stores/GistsStore', function() {
           });
         }
       };
-      store = new GistsStore(client, new MemoryStorage());
+      store = new GistStore(client, new MemoryStorage());
       gist = new Gist('some desc', {
         name: "some-file.rb",
         content: "foo = 'bar'"

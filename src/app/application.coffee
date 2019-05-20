@@ -1,4 +1,4 @@
-{ InvalidInputError } = require('./error-codes')
+{ InvalidInputError } = require('./errors')
 { Compiler } = require('./compiler')
 fs = require('fs')
 path = require('path')

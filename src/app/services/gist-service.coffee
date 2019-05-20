@@ -1,4 +1,4 @@
-exports.GistAPI = class
+exports.GistService = class
   constructor: (request, credentials) ->
     @request = request
     @credentials = credentials

@@ -6,8 +6,8 @@ fixture = (name) ->
 
 TRANSFORMATIONS =
   NoSoftBreak: 'no-soft-break'
-  GistSnippets: (p) -> p
-  GistsStore: -> 'a-fake-store'
+  RemoteCodeBlocks: (p) -> p
+  GistStore: -> 'a-fake-store'
 
 describe 'Coolfile', ->
   it 'defines the transformations', ->

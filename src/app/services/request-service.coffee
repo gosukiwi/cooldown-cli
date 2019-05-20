@@ -1,6 +1,6 @@
 superagent = require('superagent')
 
-exports.Request = class
+exports.RequestService = class
   post: (url, credentials, params, callback) ->
     superagent
       .post(url)
