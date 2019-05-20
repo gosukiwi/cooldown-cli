@@ -1,3 +1,7 @@
+var Gist;
+
+({Gist} = require('../models/gist'));
+
 // Let's not create too many gists, they can flood the users' account with
 // garbage.
 
@@ -10,28 +14,37 @@ exports.GistsStore = class {
     this.storage = storage;
   }
 
-  create(gist, callback) {
+  create(gist, done) {
     var cached, key;
     key = gist.cacheKey();
     cached = this.storage.getItem(key);
     if (cached) {
-      if (typeof callback === "function") {
-        callback(cached);
-      }
-      return this;
+      return done(Gist.fromJSON(cached));
     }
-    this.client.create(gist.toHash(), (err, res) => {
+    return this.client.create(this.options(gist), (err, res) => {
       var response;
       if (err) {
-        throw new Error("Invalid request");
+        throw err;
       }
       response = res.body;
       gist.id = response.id;
       gist.url = response.html_url;
-      this.storage.setItem(key, gist);
-      return typeof callback === "function" ? callback(gist) : void 0;
+      this.storage.setItem(key, gist.toJSON());
+      return done(gist);
     });
-    return this;
+  }
+
+  // private
+  options(gist) {
+    return {
+      description: gist.description,
+      public: gist.public,
+      files: {
+        [`${gist.file.name}`]: {
+          content: gist.file.content
+        }
+      }
+    };
   }
 
 };

@@ -1,3 +1,7 @@
+var async;
+
+async = require("async");
+
 // This class takes a renderer and a collection of transformations. Then when
 // rendering the AST, for each node type, it will run all relevant
 // transformations on that node.
@@ -15,56 +19,64 @@ exports.RendererWithTransformations = class {
     this.transformations = transformations;
   }
 
-  render(ast) {
-    var event, walker;
+  render(ast, done) {
+    var walk, walker;
     this.renderer.buffer = '';
     this.renderer.lastOut = '\n';
     walker = ast.walker();
-    while ((event = walker.next())) {
-      this.compileNode(event.node, event.entering);
-    }
-    return this.renderer.buffer;
+    walk = () => {
+      var event;
+      event = walker.next();
+      if (event) {
+        return this.compileNode(event.node, event.entering, function() {
+          return walk();
+        });
+      } else {
+        return done(this.renderer.buffer);
+      }
+    };
+    return walk();
   }
 
   // private
-  compileNode(node, entering) {
-    var anyTransformationWasRun;
-    anyTransformationWasRun = this.runTransformationsOn(node, entering);
-    if (anyTransformationWasRun) {
-      return;
-    }
-    if (typeof this.renderer[node.type] === 'function') {
-      return this.renderer[node.type](node, entering);
-    } else {
-      throw new Error(`Method not found. Please, implement \`#${node.type}'`);
-    }
-  }
-
-  runTransformationsOn(node, entering) {
-    var transformation;
-    return ((function() {
-      var i, len, ref, results;
-      ref = this.transformations;
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        transformation = ref[i];
-        results.push(this.run(transformation, node, entering));
+  compileNode(node, entering, done) {
+    return this.runTransformationsOn(node, entering, (success) => {
+      if (success) {
+        return done();
       }
-      return results;
-    }).call(this)).some(Boolean);
+      // no filter ran for this node, run default renderer's method
+      if (typeof this.renderer[node.type] === 'function') {
+        this.renderer[node.type](node, entering);
+        return done();
+      } else {
+        throw new Error(`Method not found. Please, implement \`#${node.type}'`);
+      }
+    });
   }
 
-  run(transformation, node, entering) {
+  runTransformationsOn(node, entering, done) {
+    return async.map(this.transformations, (transformation, callback) => {
+      return this.run(transformation, node, entering, function(success) {
+        return callback(null, success);
+      });
+    }, function(err, results) {
+      if (err) {
+        throw err;
+      }
+      return done(results.some(Boolean));
+    });
+  }
+
+  run(transformation, node, entering, done) {
     var action;
     if (!(transformation != null ? transformation[node.type] : void 0)) {
-      return false;
+      return done(false);
     }
     action = entering ? 'enter' : 'leave';
     if (transformation[node.type][action]) {
-      transformation[node.type][action].call(this.renderer, node);
-      return true;
+      return transformation[node.type][action].call(this.renderer, node, done);
     } else {
-      return false;
+      return done(false);
     }
   }
 

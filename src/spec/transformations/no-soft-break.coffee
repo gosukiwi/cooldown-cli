@@ -1,17 +1,15 @@
-{ MarkdownRenderer } = require_from_app('renderers/markdown-renderer')
-{ RendererWithTransformations } = require_from_app('renderers/renderer-with-transformations')
+{ Compiler } = require_from_app('compiler')
 { NoSoftBreak } = require_from_app('transformations/no-soft-break')
-commonmark = require('commonmark')
 
 describe 'Transformations/NoSoftBreak', ->
-  it "transforms single new lines into spaces", ->
+  it "transforms single new lines into spaces", (done) ->
     given = """
     This is
     a sentence.
     """
     transformations = [ NoSoftBreak ]
-    renderer = new RendererWithTransformations(new MarkdownRenderer(), transformations)
-    parser   = new commonmark.Parser()
-    ast      = parser.parse(given)
+    compiler = new Compiler(transformations)
 
-    expect(renderer.render(ast)).to.equal("This is a sentence.\n\n")
+    compiler.compile given, (result) ->
+      expect(result).to.equal("This is a sentence.\n\n")
+      done()

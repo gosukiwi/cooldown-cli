@@ -1,8 +1,8 @@
-var sha1;
+var Gist, sha1;
 
 sha1 = require('sha1');
 
-exports.Gist = class {
+Gist = class Gist {
   constructor(description, file, isPublic) {
     if (description === void 0) {
       throw new Error("Gist must have a description");
@@ -17,15 +17,26 @@ exports.Gist = class {
     this.url = null;
   }
 
+  static fromJSON(json) {
+    var gist;
+    json = JSON.parse(json);
+    gist = new Gist(json.description, json.file, json.public);
+    if (json.id) {
+      gist.id = json.id;
+    }
+    if (json.url) {
+      gist.url = json.url;
+    }
+    return gist;
+  }
+
   toHash() {
     return {
       description: this.description,
       public: this.public,
-      files: {
-        [`${this.file.name}`]: {
-          content: this.file.content
-        }
-      }
+      file: this.file,
+      id: this.id,
+      url: this.url
     };
   }
 
@@ -34,7 +45,11 @@ exports.Gist = class {
   }
 
   cacheKey() {
-    return sha1(this.toJSON());
+    return sha1(JSON.stringify({
+      description: this.description,
+      public: this.public,
+      file: this.file
+    }));
   }
 
   embedCode() {
@@ -45,3 +60,5 @@ exports.Gist = class {
   }
 
 };
+
+exports.Gist = Gist;

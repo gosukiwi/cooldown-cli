@@ -1,21 +1,18 @@
-var MarkdownRenderer, NoSoftBreak, RendererWithTransformations, commonmark;
+var Compiler, NoSoftBreak;
 
-({MarkdownRenderer} = require_from_app('renderers/markdown-renderer'));
-
-({RendererWithTransformations} = require_from_app('renderers/renderer-with-transformations'));
+({Compiler} = require_from_app('compiler'));
 
 ({NoSoftBreak} = require_from_app('transformations/no-soft-break'));
 
-commonmark = require('commonmark');
-
 describe('Transformations/NoSoftBreak', function() {
-  return it("transforms single new lines into spaces", function() {
-    var ast, given, parser, renderer, transformations;
+  return it("transforms single new lines into spaces", function(done) {
+    var compiler, given, transformations;
     given = "This is\na sentence.";
     transformations = [NoSoftBreak];
-    renderer = new RendererWithTransformations(new MarkdownRenderer(), transformations);
-    parser = new commonmark.Parser();
-    ast = parser.parse(given);
-    return expect(renderer.render(ast)).to.equal("This is a sentence.\n\n");
+    compiler = new Compiler(transformations);
+    return compiler.compile(given, function(result) {
+      expect(result).to.equal("This is a sentence.\n\n");
+      return done();
+    });
   });
 });

@@ -7,5 +7,5 @@ exports.Compiler = class
     @renderer = new RendererWithTransformations(new MarkdownRenderer(), transformations)
     @parser   = new commonmark.Parser()
 
-  compile: (input) ->
-    @renderer.render @parser.parse(input)
+  compile: (input, done) ->
+    @renderer.render @parser.parse(input), done

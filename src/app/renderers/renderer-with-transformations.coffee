@@ -1,3 +1,5 @@
+async = require("async")
+
 # This class takes a renderer and a collection of transformations. Then when
 # rendering the AST, for each node type, it will run all relevant
 # transformations on that node.
@@ -14,36 +16,46 @@ exports.RendererWithTransformations = class
     @renderer        = renderer
     @transformations = transformations
 
-  render: (ast) ->
+  render: (ast, done) ->
     @renderer.buffer = ''
     @renderer.lastOut = '\n'
 
     walker = ast.walker()
-    while (event = walker.next())
-      @compileNode event.node, event.entering
-
-    @renderer.buffer
+    walk = =>
+      event = walker.next()
+      if event
+        @compileNode event.node, event.entering, ->
+          walk()
+      else
+        done(@renderer.buffer)
+    walk()
 
   # private
 
-  compileNode: (node, entering) ->
-    anyTransformationWasRun = @runTransformationsOn(node, entering)
-    return if anyTransformationWasRun
+  compileNode: (node, entering, done) ->
+    @runTransformationsOn node, entering, (success) =>
+      return done() if success
 
-    if typeof @renderer[node.type] is 'function'
-      @renderer[node.type](node, entering)
-    else
-      throw new Error("Method not found. Please, implement `##{node.type}'")
+      # no filter ran for this node, run default renderer's method
+      if typeof @renderer[node.type] is 'function'
+        @renderer[node.type](node, entering)
+        done()
+      else
+        throw new Error("Method not found. Please, implement `##{node.type}'")
 
-  runTransformationsOn: (node, entering) ->
-    (@run(transformation, node, entering) for transformation in @transformations).some(Boolean)
+  runTransformationsOn: (node, entering, done) ->
+    async.map @transformations, (transformation, callback) =>
+      @run transformation, node, entering, (success) ->
+        callback(null, success)
+    , (err, results) ->
+      throw err if err
+      done(results.some(Boolean))
 
-  run: (transformation, node, entering) ->
-    return false unless transformation?[node.type]
+  run: (transformation, node, entering, done) ->
+    return done(false) unless transformation?[node.type]
 
     action = if entering then 'enter' else 'leave'
     if transformation[node.type][action]
-      transformation[node.type][action].call(@renderer, node)
-      true
+      transformation[node.type][action].call(@renderer, node, done)
     else
-      false
+      done(false)

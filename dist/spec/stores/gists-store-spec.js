@@ -6,15 +6,15 @@ var Gist, GistsStore, MemoryStorage;
 
 MemoryStorage = class MemoryStorage {
   constructor() {
-    this.store = {};
+    this.storage = {};
   }
 
   getItem(key) {
-    return this.store[key];
+    return this.storage[key] || null;
   }
 
   setItem(key, value) {
-    return this.store[key] = value;
+    return this.storage[key] = value;
   }
 
 };
@@ -28,38 +28,34 @@ describe('Stores/GistsStore', function() {
         content: "foo = 'bar'"
       });
       client = {
-        create: function(params, callback) {
-          var response;
-          response = {
+        create: function(_params, callback) {
+          return callback(null, {
             body: {
-              id: "some-id",
-              html_url: "https://some.url"
+              id: 1,
+              html_url: "foo"
             }
-          };
-          return callback(null, response);
+          });
         }
       };
       store = new GistsStore(client, new MemoryStorage());
       return store.create(gist, function(gist) {
-        expect(gist.id).not.to.equal(null);
-        expect(gist.url).not.to.equal(null);
+        expect(gist.id).to.equal(1);
+        expect(gist.url).to.equal("foo");
         return done();
       });
     });
-    return it("does not create the same gist twice", function() {
+    return it("does not create the same gist twice", function(done) {
       var client, gist, store, timesCalled;
       timesCalled = 0;
       client = {
-        create: function(gist, callback) {
-          var response;
-          response = {
-            body: {
-              id: "some-id",
-              html_url: "https://some.url"
-            }
-          };
+        create: function(_params, callback) {
           timesCalled += 1;
-          return callback(null, response);
+          return callback(null, {
+            body: {
+              id: 1,
+              html_url: "foo"
+            }
+          });
         }
       };
       store = new GistsStore(client, new MemoryStorage());
@@ -67,9 +63,12 @@ describe('Stores/GistsStore', function() {
         name: "some-file.rb",
         content: "foo = 'bar'"
       });
-      store.create(gist);
-      store.create(gist);
-      return expect(timesCalled).to.equal(1);
+      return store.create(gist, function(gist) {
+        return store.create(gist, function() {
+          expect(timesCalled).to.equal(1);
+          return done();
+        });
+      });
     });
   });
 });

@@ -1,6 +1,12 @@
-var Gist, extensions;
+var Gist, GistAPI, GistsStore, LocalStorage, extensions;
 
 ({Gist} = require("../models/gist"));
+
+({GistsStore} = require("../stores/gists-store"));
+
+({GistAPI} = require("../services/gist-api"));
+
+({LocalStorage} = require("node-localstorage"));
 
 extensions = {
   actionscript3: 'as',
@@ -16,10 +22,14 @@ extensions = {
   text: 'txt'
 };
 
-exports.GistSnippets = function(store) {
+exports.GistSnippets = function(credentials) {
+  var client, storage, store;
+  client = new GistAPI(credentials);
+  storage = new LocalStorage("./.cooldown-cache");
+  store = new GistsStore(client, storage);
   return {
     code_block: {
-      enter: function(node) {
+      enter: function(node, done) {
         var extension, gist, language, ref, ref1;
         language = (node != null ? (ref = node.info) != null ? (ref1 = ref.split(/\s+/)) != null ? ref1[0] : void 0 : void 0 : void 0) || "text";
         extension = (extensions != null ? extensions[language] : void 0) || language;
@@ -27,17 +37,17 @@ exports.GistSnippets = function(store) {
           name: `snippet.${extension}`,
           content: node.literal
         });
-        return store.create(gist, () => {
-          this.cr();
+        return store.create(gist, (gist) => {
           this.put(gist.embedCode());
-          return this.cr();
+          this.put("\n\n");
+          return done(true);
         });
       }
-    },
-    // TODO: This should be run after all the markdown files have been compiled,
-    // for general cleanup.
-    finally: function() {}
+    }
   };
 };
 
-// GistsStore.prune()
+// TODO: This should be run after all the markdown files have been compiled,
+// for general cleanup.
+// finally: ->
+//   GistsStore.prune()

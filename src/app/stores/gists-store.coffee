@@ -1,3 +1,5 @@
+{ Gist } = require('../models/gist')
+
 # Let's not create too many gists, they can flood the users' account with
 # garbage.
 #
@@ -9,19 +11,25 @@ exports.GistsStore = class
     @client = client
     @storage = storage
 
-  create: (gist, callback) ->
+  create: (gist, done) ->
     key = gist.cacheKey()
     cached = @storage.getItem(key)
-    if cached
-      callback?(cached)
-      return this
 
-    @client.create gist.toHash(), (err, res) =>
-      throw new Error("Invalid request") if err
+    return done(Gist.fromJSON(cached)) if cached
+
+    @client.create @options(gist), (err, res) =>
+      throw err if err
       response = res.body
       gist.id  = response.id
       gist.url = response.html_url
-      @storage.setItem(key, gist)
-      callback?(gist)
+      @storage.setItem(key, gist.toJSON())
+      done(gist)
 
-    this
+  # private
+
+  options: (gist) ->
+    description: gist.description
+    public: gist.public
+    files:
+      "#{gist.file.name}":
+        content: gist.file.content

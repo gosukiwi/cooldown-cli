@@ -3,47 +3,39 @@
 
 class MemoryStorage
   constructor: ->
-    @store = {}
+    @storage = {}
 
   getItem: (key) ->
-    @store[key]
+    @storage[key] or null
 
   setItem: (key, value) ->
-    @store[key] = value
+    @storage[key] = value
 
 describe 'Stores/GistsStore', ->
   describe '#create', ->
     it "sets the ID and URL", (done) ->
-      gist   = new Gist('some desc', name: "some-file.rb", content: "foo = 'bar'")
+      gist = new Gist('some desc', name: "some-file.rb", content: "foo = 'bar'")
       client =
-        create: (params, callback) ->
-          response =
-            body:
-              id: "some-id"
-              html_url: "https://some.url"
-          callback(null, response)
+        create: (_params, callback) ->
+          callback(null, body: { id: 1, html_url: "foo" })
       store = new GistsStore(client, new MemoryStorage())
 
       store.create gist, (gist) ->
-        expect(gist.id).not.to.equal(null)
-        expect(gist.url).not.to.equal(null)
+        expect(gist.id).to.equal(1)
+        expect(gist.url).to.equal("foo")
         done()
 
-    it "does not create the same gist twice", ->
+    it "does not create the same gist twice", (done) ->
       timesCalled = 0
       client =
-        create: (gist, callback) ->
-          response =
-            body:
-              id: "some-id"
-              html_url: "https://some.url"
+        create: (_params, callback) ->
           timesCalled += 1
-          callback(null, response)
+          callback(null, body: { id: 1, html_url: "foo" })
 
       store = new GistsStore(client, new MemoryStorage())
       gist  = new Gist('some desc', name: "some-file.rb", content: "foo = 'bar'")
 
-      store.create(gist)
-      store.create(gist)
-
-      expect(timesCalled).to.equal(1)
+      store.create gist, (gist) ->
+        store.create gist, ->
+          expect(timesCalled).to.equal(1)
+          done()

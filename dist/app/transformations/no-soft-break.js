@@ -1,7 +1,8 @@
 exports.NoSoftBreak = {
   softbreak: {
-    enter: function(node) {
-      return this.put(" ");
+    enter: function(node, done) {
+      this.put(" ");
+      return done(true);
     }
   }
 };

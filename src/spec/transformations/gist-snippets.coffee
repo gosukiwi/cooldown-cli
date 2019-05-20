@@ -1,22 +1,22 @@
-{ MarkdownRenderer } = require_from_app('renderers/markdown-renderer')
-{ RendererWithTransformations } = require_from_app('renderers/renderer-with-transformations')
+{ Compiler } = require_from_app('compiler')
 { GistSnippets } = require_from_app('transformations/gist-snippets')
-commonmark = require('commonmark')
 
 describe 'Transformations/GistSnippets', ->
-  it "creates a gist from a `code_block`", ->
+  it "creates a gist from a `code_block`", (done) ->
     dummyStore =
       create: (gist, callback) ->
+        gist.id = 123
         gist.url = "http://some-fake.url"
         callback(gist)
-        this
     given = """
     ```ruby
     this_is = "some ruby code!"
     ```
     """
-    renderer = new RendererWithTransformations(new MarkdownRenderer(), [GistSnippets(dummyStore)])
-    parser   = new commonmark.Parser()
-    ast      = parser.parse(given)
+    # TODO: `GistSnippets` expects credentials and uses the real GistStore. This
+    # should use a mock...
+    compiler = new Compiler([GistSnippets(dummyStore)])
 
-    expect(renderer.render(ast)).to.equal("<script src='http://some-fake.url.js'></script>\n")
+    compiler.compile given, (result) ->
+      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n")
+      done()

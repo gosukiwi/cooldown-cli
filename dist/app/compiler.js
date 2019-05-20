@@ -12,8 +12,8 @@ exports.Compiler = class {
     this.parser = new commonmark.Parser();
   }
 
-  compile(input) {
-    return this.renderer.render(this.parser.parse(input));
+  compile(input, done) {
+    return this.renderer.render(this.parser.parse(input), done);
   }
 
 };

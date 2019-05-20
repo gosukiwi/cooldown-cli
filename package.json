@@ -25,6 +25,7 @@
     "mocha": "^6.1.4"
   },
   "dependencies": {
+    "async": "^2.6.2",
     "commander": "^2.20.0",
     "commonmark": "^0.29.0",
     "glob": "^7.1.4",

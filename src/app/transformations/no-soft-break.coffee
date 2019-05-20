@@ -1,4 +1,5 @@
 exports.NoSoftBreak =
   softbreak:
-    enter: (node) ->
+    enter: (node, done) ->
       @put " "
+      done(true)

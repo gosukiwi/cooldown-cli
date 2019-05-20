@@ -100,7 +100,7 @@ exports.default = function (transformation) {
 }
 ```
 
-## GistSnippet
+## GistSnippets
 This transformations takes a credentials object as parameter:
 
 ```javascript
@@ -127,7 +127,7 @@ credentials = {
 exports.default = function (transformation) {
   return [
     // ...
-    transformation('GistSnippet', credentials)
+    transformation('GistSnippets', credentials)
   ];
 }
 ```
@@ -283,3 +283,7 @@ Remember to run `npm install` before running `gulp` for the first time.
 Specs live in `src/spec/`. To run specs:
 
     $ npm test
+
+To run a single spec:
+
+    $ npx mocha --grep MyTestName --recursive --file ./dist/spec/spec_helper.js ./dist /spec

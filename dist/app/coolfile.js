@@ -1,8 +1,10 @@
-var GistSnippets, NoSoftBreak, TRANSFORMATIONS, fs, transformations;
+var GistSnippets, NoSoftBreak, TRANSFORMATIONS, TransformationNotFoundError, fs, transformations;
 
 ({NoSoftBreak} = require('./transformations/no-soft-break'));
 
 ({GistSnippets} = require('./transformations/gist-snippets'));
+
+({TransformationNotFoundError} = require('./error-codes'));
 
 fs = require('fs');
 
@@ -13,7 +15,7 @@ TRANSFORMATIONS = {
 
 transformations = function(name) {
   return TRANSFORMATIONS[name] || (function() {
-    throw new Error("Invalid Transformation");
+    throw new TransformationNotFoundError(`[COOLFILE] Transformation with name \`${name}' was not found.`);
   })();
 };
 

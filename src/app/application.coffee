@@ -1,38 +1,45 @@
-{ ERROR_CODES } = require('./error-codes')
+{ InvalidInputError } = require('./error-codes')
 { Compiler } = require('./compiler')
 fs = require('fs')
 path = require('path')
 glob = require('glob')
+async = require("async")
 
 exports.Application = class
   constructor: (input, output, compiler) ->
-    throw new Error(ERROR_CODES.INVALID_INPUT) unless input
+    throw new InvalidInputError unless input
     @glob     = input
     @output   = output
     @compiler = compiler
 
-  run: ->
+  run: (done) ->
+    @mkdir()
     glob @glob, {}, (err, files) =>
       throw err if err
-      @process(file) for file in files
+      async.map files, (file, callback) =>
+        @process(file, callback)
+      , (err, _result) =>
+        throw err if err
+        done()
 
   # private
 
-  process: (file) ->
-    fs.readFile file, 'utf8', (err, data) =>
-      throw err if err
-      @writeFile baseFile: file, newFileContent: @compile(data)
+  process: (file, callback) ->
+    data = fs.readFileSync(file, 'utf8')
+    @compile data, (content) =>
+      @write baseFile: file, newFileContent: content
+      callback(null, file)
 
-  writeFile: (options) ->
+  write: (options) ->
     baseFile = options.baseFile
     newFileContent = options.newFileContent
+    fs.writeFileSync path.join(@output, path.basename(baseFile)), newFileContent
 
-    fs.mkdir @output, recursive: true, (_error) =>
-      # Ignore `_error`. If there is an error, the output directory is already
-      # created.
-      outputFilePath = path.join @output, path.basename(baseFile)
-      fs.writeFile outputFilePath, newFileContent, (err) =>
-        throw err if err
+  mkdir: ->
+    try
+      fs.mkdirSync @output, recursive: true
+    catch
+      # I don't care
 
-  compile: (input) ->
-    @compiler.compile input
+  compile: (input, done) ->
+    @compiler.compile input, done

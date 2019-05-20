@@ -1,27 +1,26 @@
-var GistSnippets, MarkdownRenderer, RendererWithTransformations, commonmark;
+var Compiler, GistSnippets;
 
-({MarkdownRenderer} = require_from_app('renderers/markdown-renderer'));
-
-({RendererWithTransformations} = require_from_app('renderers/renderer-with-transformations'));
+({Compiler} = require_from_app('compiler'));
 
 ({GistSnippets} = require_from_app('transformations/gist-snippets'));
 
-commonmark = require('commonmark');
-
 describe('Transformations/GistSnippets', function() {
-  return it("creates a gist from a `code_block`", function() {
-    var ast, dummyStore, given, parser, renderer;
+  return it("creates a gist from a `code_block`", function(done) {
+    var compiler, dummyStore, given;
     dummyStore = {
       create: function(gist, callback) {
+        gist.id = 123;
         gist.url = "http://some-fake.url";
-        callback(gist);
-        return this;
+        return callback(gist);
       }
     };
     given = "```ruby\nthis_is = \"some ruby code!\"\n```";
-    renderer = new RendererWithTransformations(new MarkdownRenderer(), [GistSnippets(dummyStore)]);
-    parser = new commonmark.Parser();
-    ast = parser.parse(given);
-    return expect(renderer.render(ast)).to.equal("<script src='http://some-fake.url.js'></script>\n");
+    // TODO: `GistSnippets` expects credentials and uses the real GistStore. This
+    // should use a mock...
+    compiler = new Compiler([GistSnippets(dummyStore)]);
+    return compiler.compile(given, function(result) {
+      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n");
+      return done();
+    });
   });
 });
