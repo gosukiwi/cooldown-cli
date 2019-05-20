@@ -13,10 +13,8 @@ describe 'Transformations/GistSnippets', ->
     this_is = "some ruby code!"
     ```
     """
-    # TODO: `GistSnippets` expects credentials and uses the real GistStore. This
-    # should use a mock...
     compiler = new Compiler([GistSnippets(dummyStore)])
 
     compiler.compile given, (result) ->
-      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n")
+      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n\n")
       done()

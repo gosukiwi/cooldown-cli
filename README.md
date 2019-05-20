@@ -26,13 +26,17 @@ do the repetitive work of formatting and adjusting markdown for you.
 You can even plug-it into `gulp` and normalize all your files as you write if
 you ever want that workflow.
 
+# Installation
+
+    $ npm install -g cooldown
+
 # Usage
 `coolfile.js`:
 ```javascript
-exports.default = function (transformation) {
+exports.default = function (load) {
   return [
-    transformation('NoSoftBreak'),
-    transformation('NoEmptyLineAfterHeading')
+    load('NoSoftBreak'),
+    load('NoEmptyLineAfterHeading')
   ]
 }
 ```
@@ -67,7 +71,7 @@ The new version will live in `./out/my-original-file.md` by default. Run
 `--help` for more info on the CLI.
 
 # The `cooldown.js` file
-The _coolfile_ is just a regular JavaScript file which exports a function. The
+The **coolfile** is just a regular JavaScript file which exports a function. The
 exported function takes a `transformations` function as argument, which is used
 to retrieve built-in transformations. Our exported function must return an array
 of transformations.
@@ -75,9 +79,9 @@ of transformations.
 An empty coolfile would look like this:
 
 ```javascript
-exports.default = function (transformations) {
+exports.default = function (load) {
   return [
-    // transformations('SomeTransformationName')
+    // load('SomeTransformationName')
   ]
 }
 ```
@@ -92,10 +96,10 @@ paragraphs.
 Example usage:
 
 ```javascript
-exports.default = function (transformation) {
+exports.default = function (load) {
   return [
     // ...
-    transformation('NoSoftBreak')
+    load('NoSoftBreak')
   ];
 }
 ```
@@ -124,10 +128,12 @@ credentials = {
   password: process.env.GITHUB_TOKEN
 }
 
-exports.default = function (transformation) {
+exports.default = function (load) {
+  store = load('GistsStore')(credentials)
+
   return [
     // ...
-    transformation('GistSnippets', credentials)
+    load('GistSnippets', store)
   ];
 }
 ```
@@ -144,9 +150,9 @@ const myCustomTransformation = {
   }
 };
 
-exports.default = function (transformation) {
+exports.default = function (load) {
   return [
-    transformation('NoSoftBreak'),
+    load('NoSoftBreak'),
     myCustomTransformation
   ];
 }
@@ -157,9 +163,9 @@ If interested, `npm` packages can be created to share your transformations:
 ```javascript
 const someCoolTransformation = require('cooldown-coolstuff')
 
-exports.default = function (transformation) {
+exports.default = function (load) {
   return [
-    transformation('NoSoftBreak'),
+    load('NoSoftBreak'),
     someCoolTransformation
   ];
 }
@@ -244,22 +250,28 @@ These are all possible node types: `text`, `softbreak`, `linebreak`, `emph`,
 See `src/app/vendor/extensions/commonmark/markdown-renderer.coffee` to know the
 details of the `MarkdownRenderer`.
 
+## Example Transformations
+You can check out the built-in transformations to get examples. Built-in
+transformations live in `./src/app/transformations/`.
+
 # Programmatic usage
 You can use Cooldown programmatically as such:
 
 ```javascript
-const { Cooldown, Compiler, coolfile } = require('cooldown')
-const transformations = coolfile('./coolfile.js')
+const { Cooldown, Compiler, coolfile, loader } = require('cooldown')
+const transformations = coolfile('./coolfile.js')(loader)
 const compiler = new Compiler(transformations)
 const cooldown = new Cooldown('./src/*.md', './out', compiler)
 
-cooldown.run()
+cooldown.run(() => console.log('Done!'))
 ```
 
 You can test the output with `Compiler#compile`:
 
 ```javascript
-compiler.compile("Some _markdown_ **here**")
+compiler.compile("Some _markdown_ **here**", (result) => {
+  console.log(result)
+})
 ```
 
 # Developers

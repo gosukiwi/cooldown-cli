@@ -1,7 +1,4 @@
 { Gist } = require("../models/gist")
-{ GistsStore } = require("../stores/gists-store")
-{ GistAPI } = require("../services/gist-api")
-{ LocalStorage } = require("node-localstorage")
 
 extensions =
   actionscript3: 'as'
@@ -16,11 +13,7 @@ extensions =
   ruby: 'rb'
   text: 'txt'
 
-exports.GistSnippets = (credentials) ->
-  client  = new GistAPI(credentials)
-  storage = new LocalStorage("./.cooldown-cache")
-  store   = new GistsStore(client, storage)
-
+exports.GistSnippets = (store) ->
   code_block:
     enter: (node, done) ->
       language  = node?.info?.split(/\s+/)?[0] or "text"
@@ -29,7 +22,7 @@ exports.GistSnippets = (credentials) ->
       store.create gist, (gist) =>
         @put gist.embedCode()
         @put "\n\n"
-        done(true)
+        done()
 
   # TODO: This should be run after all the markdown files have been compiled,
   # for general cleanup.

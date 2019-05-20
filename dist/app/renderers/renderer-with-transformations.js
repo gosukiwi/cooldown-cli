@@ -74,7 +74,9 @@ exports.RendererWithTransformations = class {
     }
     action = entering ? 'enter' : 'leave';
     if (transformation[node.type][action]) {
-      return transformation[node.type][action].call(this.renderer, node, done);
+      return transformation[node.type][action].call(this.renderer, node, function() {
+        return done(true);
+      });
     } else {
       return done(false);
     }

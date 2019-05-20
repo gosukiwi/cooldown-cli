@@ -1,12 +1,6 @@
-var Gist, GistAPI, GistsStore, LocalStorage, extensions;
+var Gist, extensions;
 
 ({Gist} = require("../models/gist"));
-
-({GistsStore} = require("../stores/gists-store"));
-
-({GistAPI} = require("../services/gist-api"));
-
-({LocalStorage} = require("node-localstorage"));
 
 extensions = {
   actionscript3: 'as',
@@ -22,11 +16,7 @@ extensions = {
   text: 'txt'
 };
 
-exports.GistSnippets = function(credentials) {
-  var client, storage, store;
-  client = new GistAPI(credentials);
-  storage = new LocalStorage("./.cooldown-cache");
-  store = new GistsStore(client, storage);
+exports.GistSnippets = function(store) {
   return {
     code_block: {
       enter: function(node, done) {
@@ -40,7 +30,7 @@ exports.GistSnippets = function(credentials) {
         return store.create(gist, (gist) => {
           this.put(gist.embedCode());
           this.put("\n\n");
-          return done(true);
+          return done();
         });
       }
     }

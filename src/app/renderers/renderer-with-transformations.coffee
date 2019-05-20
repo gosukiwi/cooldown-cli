@@ -56,6 +56,6 @@ exports.RendererWithTransformations = class
 
     action = if entering then 'enter' else 'leave'
     if transformation[node.type][action]
-      transformation[node.type][action].call(@renderer, node, done)
+      transformation[node.type][action].call(@renderer, node, -> done(true))
     else
       done(false)

@@ -1,13 +1,7 @@
-superagent = require('superagent')
-
 exports.GistAPI = class
-  constructor: (credentials) ->
+  constructor: (request, credentials) ->
+    @request = request
     @credentials = credentials
 
   create: (params, callback) ->
-    superagent
-      .post("https://api.github.com/gists")
-      .set("User-Agent", "request")
-      .auth(@credentials.username, @credentials.password)
-      .send(params)
-      .end((err, res) -> callback(err, res))
+    @request.post("https://api.github.com/gists", @credentials, params, callback)

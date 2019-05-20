@@ -15,11 +15,9 @@ describe('Transformations/GistSnippets', function() {
       }
     };
     given = "```ruby\nthis_is = \"some ruby code!\"\n```";
-    // TODO: `GistSnippets` expects credentials and uses the real GistStore. This
-    // should use a mock...
     compiler = new Compiler([GistSnippets(dummyStore)]);
     return compiler.compile(given, function(result) {
-      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n");
+      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n\n");
       return done();
     });
   });
