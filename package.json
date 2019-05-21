@@ -1,7 +1,7 @@
 {
-  "name": "markdown-preprocessor",
+  "name": "cooldown-cli",
   "version": "0.0.1",
-  "description": "Transform and normalize your markdown files",
+  "description": "Make your markdown files consistent",
   "main": "dist/app/index.js",
   "scripts": {
     "test": "mocha --recursive --file ./dist/spec/spec_helper.js ./dist/spec",
@@ -12,7 +12,8 @@
   },
   "keywords": [
     "preprocessor",
-    "markdown"
+    "markdown",
+    "transpiler"
   ],
   "author": "Federico Ramirez",
   "license": "ISC",

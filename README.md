@@ -28,7 +28,7 @@ you ever want that workflow.
 
 # Installation
 
-    $ npm install -g cooldown
+    $ npm install -g cooldown-cli
 
 # Usage
 `coolfile.js`:
