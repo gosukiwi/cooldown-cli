@@ -1,8 +1,6 @@
-var Compiler, InvalidInputError, async, fs, glob, path;
+var InvalidInputError, async, fs, glob, path;
 
 ({InvalidInputError} = require('./errors'));
-
-({Compiler} = require('./compiler'));
 
 fs = require('fs');
 
@@ -34,7 +32,9 @@ exports.Application = class {
         if (err) {
           throw err;
         }
-        return done();
+        return this.compiler.cleanup(function() {
+          return done();
+        });
       });
     });
   }

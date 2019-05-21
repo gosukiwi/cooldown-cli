@@ -141,8 +141,9 @@ You can define your own transformations as such:
 ```javascript
 const myCustomTransformation = {
   paragraph: {
-    enter: function (node, entering) {
-      this.put("A paragraph");
+    enter: function (node, done) {
+      this.put("A paragraph")
+      done()
     }
   }
 };
@@ -155,6 +156,7 @@ exports.default = function (load) {
 }
 ```
 
+## Public Transformations
 If interested, `npm` packages can be created to share your transformations:
 
 ```javascript
@@ -209,12 +211,14 @@ methods.
 ```javascript
 const PlainText = {
   text: { // <-- `text` was the node type
-    enter: function(node) {
-      this.put(node.literal);
+    enter: function(node, done) {
+      this.put(node.literal)
+      done()
     },
 
-    leave: function (node) {
+    leave: function (node, done) {
       // do something... or not
+      done()
     }
   }
 }
@@ -225,13 +229,37 @@ method for a node, **the base method will be ignored**. If you want to invoke
 the default behaviour you can do something like:
 
 ```javascript
-enter: function(node) {
+enter: function(node, done) {
   this.text(node, true); // or `false` if this were in the leave method
+  done()
 }
 ```
 
 Another important thing to know is that not all nodes have children, so the
 `#leave` will not be called in that case.
+
+### Cleanup
+Transformations can also perform cleanup tasks once the markdown file has  been
+generated. It's useful for releasing resources, invalidating caches and whatnot.
+
+You can define a cleanup task simply by defining a `finally` method:
+
+```javascript
+const SomeTransformation = {
+  text: {
+    // ...
+  },
+
+  paragraph: {
+    // ...
+  }
+
+  finally: function(done) {
+    // do some work
+    done()
+  }
+}
+```
 
 ## Writing to the output buffer
 You can use the following methods inside your `enter` and `leave` functions to

@@ -24,7 +24,5 @@ exports.RemoteCodeBlocks = (store) ->
         @put "\n\n"
         done()
 
-  # TODO: This should be run after all the markdown files have been compiled,
-  # for general cleanup.
-  # finally: ->
-  #   GistStore.prune()
+  finally: (done) ->
+    store.prune(done)

@@ -8,4 +8,8 @@ exports.GistService = class {
     return this.request.post("https://api.github.com/gists", this.credentials, params, callback);
   }
 
+  delete(id, callback) {
+    return this.request.delete(`https://api.github.com/gists/${id}`, this.credentials, callback);
+  }
+
 };

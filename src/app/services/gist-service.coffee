@@ -5,3 +5,6 @@ exports.GistService = class
 
   create: (params, callback) ->
     @request.post("https://api.github.com/gists", @credentials, params, callback)
+
+  delete: (id, callback) ->
+    @request.delete("https://api.github.com/gists/#{id}", @credentials, callback)

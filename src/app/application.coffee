@@ -1,5 +1,4 @@
 { InvalidInputError } = require('./errors')
-{ Compiler } = require('./compiler')
 fs = require('fs')
 path = require('path')
 glob = require('glob')
@@ -20,7 +19,8 @@ exports.Application = class
         @process(file, callback)
       , (err, _result) =>
         throw err if err
-        done()
+        @compiler.cleanup ->
+          done()
 
   # private
 

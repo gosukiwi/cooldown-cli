@@ -33,11 +33,9 @@ exports.RemoteCodeBlocks = function(store) {
           return done();
         });
       }
+    },
+    finally: function(done) {
+      return store.prune(done);
     }
   };
 };
-
-// TODO: This should be run after all the markdown files have been compiled,
-// for general cleanup.
-// finally: ->
-//   GistStore.prune()
