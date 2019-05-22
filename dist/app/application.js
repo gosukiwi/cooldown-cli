@@ -32,9 +32,7 @@ exports.Application = class {
         if (err) {
           throw err;
         }
-        return this.compiler.cleanup(function() {
-          return done();
-        });
+        return this.compiler.cleanup(done);
       });
     });
   }

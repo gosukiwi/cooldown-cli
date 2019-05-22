@@ -19,8 +19,7 @@ exports.Application = class
         @process(file, callback)
       , (err, _result) =>
         throw err if err
-        @compiler.cleanup ->
-          done()
+        @compiler.cleanup(done)
 
   # private
 
