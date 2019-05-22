@@ -11,5 +11,5 @@ describe 'Transformations/NoSoftBreak', ->
     compiler = new Compiler(transformations)
 
     compiler.compile given, (result) ->
-      expect(result).to.equal("This is a sentence.\n\n")
+      expect(result).to.equal("This is a sentence.")
       done()

@@ -90,8 +90,25 @@ exports.default = function (load) {
 Below are all the buil-in transformations.
 
 ## NoSoftBreak
-No parameters. Use space as soft-break, so there are no line-breaks in
-paragraphs.
+Use space as soft-break, so there are no line-breaks in paragraphs.
+
+Transforms this:
+
+```markdown
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ut mauris ut
+tellus scelerisque volutpat a sed lacus.
+
+Cras vulputate, sapien maximus vestibulum pulvinar, erat nibh ornare orci, ut
+pretium libero tellus quis sapien.
+```
+
+Into this:
+
+```markdown
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ut mauris ut tellus scelerisque volutpat a sed lacus.
+
+Cras vulputate, sapien maximus vestibulum pulvinar, erat nibh ornare orci, ut pretium libero tellus quis sapien.
+```
 
 Example usage:
 
@@ -104,10 +121,54 @@ exports.default = function (load) {
 }
 ```
 
+## NoEmptyLineAfterHeading
+Do not leave an empty line between the heading and the start of the paragraph.
+
+Transforms this:
+
+```markdown
+# Title
+
+This is a paragraph [...]
+```
+
+Into this:
+
+```markdown
+# Title
+This is a paragraph [...]
+```
+
+Example usage:
+
+```javascript
+exports.default = function (load) {
+  return [
+    // ...
+    load('NoEmptyLineAfterHeading')
+  ];
+}
+```
+
 ## RemoteCodeBlocks
 This transformation takes all your code blocks and uploads them to what's called
 a `store`. By default, the only supported store is
 [Gist](https://gist.github.com/), you can get it with `load('GistStore')`.
+
+Transforms this:
+
+
+    This is a demo code snippet:
+
+    ```ruby
+    foo = Bar.new(1, 2, 3)
+    ```  
+
+Into this:
+
+    This is a demo code snippet:
+
+    <script src="https://gist.gisthub.com/..."></script>
 
 Example usage:
 ```javascript

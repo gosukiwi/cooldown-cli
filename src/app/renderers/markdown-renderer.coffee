@@ -7,7 +7,6 @@ markdownEscape = require('markdown-escape')
 DEFAULT_OPTIONS =
   softbreak: '\n'
   safe: false # skips inline HTML
-  emptyLineAfterHeadings: no
 
 exports.MarkdownRenderer = class extends Renderer
   constructor: (options) ->
@@ -67,7 +66,6 @@ exports.MarkdownRenderer = class extends Renderer
       @put " "
     else
       @cr()
-      @put "\n" if @options.emptyLineAfterHeadings
 
   code_block: (node, entering) ->
     info_words = if node.info then node.info.split(/\s+/) else []

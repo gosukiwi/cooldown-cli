@@ -11,7 +11,7 @@ describe('Transformations/NoSoftBreak', function() {
     transformations = [NoSoftBreak];
     compiler = new Compiler(transformations);
     return compiler.compile(given, function(result) {
-      expect(result).to.equal("This is a sentence.\n\n");
+      expect(result).to.equal("This is a sentence.");
       return done();
     });
   });

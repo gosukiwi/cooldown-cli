@@ -27,7 +27,7 @@ exports.RendererWithTransformations = class
         @compileNode event.node, event.entering, ->
           walk()
       else
-        done(@renderer.buffer)
+        done(@renderer.buffer.trim())
     walk()
 
   # private

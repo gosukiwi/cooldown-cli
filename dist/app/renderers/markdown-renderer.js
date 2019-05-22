@@ -9,8 +9,7 @@ markdownEscape = require('markdown-escape');
 // TODO: This should be moved to a transformations API.
 DEFAULT_OPTIONS = {
   softbreak: '\n',
-  safe: false, // skips inline HTML
-  emptyLineAfterHeadings: false
+  safe: false // skips inline HTML
 };
 
 exports.MarkdownRenderer = class extends Renderer {
@@ -81,10 +80,7 @@ exports.MarkdownRenderer = class extends Renderer {
       }
       return this.put(" ");
     } else {
-      this.cr();
-      if (this.options.emptyLineAfterHeadings) {
-        return this.put("\n");
-      }
+      return this.cr();
     }
   }
 

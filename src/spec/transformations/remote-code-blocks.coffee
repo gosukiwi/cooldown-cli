@@ -16,5 +16,5 @@ describe 'Transformations/RemoteCodeBlocks', ->
     compiler = new Compiler([RemoteCodeBlocks(dummyStore)])
 
     compiler.compile given, (result) ->
-      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n\n")
+      expect(result).to.equal("<script src='http://some-fake.url.js'></script>")
       done()

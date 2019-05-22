@@ -32,7 +32,7 @@ exports.RendererWithTransformations = class {
           return walk();
         });
       } else {
-        return done(this.renderer.buffer);
+        return done(this.renderer.buffer.trim());
       }
     };
     return walk();

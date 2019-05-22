@@ -17,7 +17,7 @@ describe('Transformations/RemoteCodeBlocks', function() {
     given = "```ruby\nthis_is = \"some ruby code!\"\n```";
     compiler = new Compiler([RemoteCodeBlocks(dummyStore)]);
     return compiler.compile(given, function(result) {
-      expect(result).to.equal("<script src='http://some-fake.url.js'></script>\n\n");
+      expect(result).to.equal("<script src='http://some-fake.url.js'></script>");
       return done();
     });
   });
