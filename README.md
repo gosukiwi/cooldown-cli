@@ -89,14 +89,15 @@ exports.default = function (load) {
 # Available Transformations
 Below are all the built-in transformations.
 
-* [NoSoftBreak](doc/available-transformations.md#NoSoftBreak)
-* [NoEmptyLineAfterHeading](doc/available-transformations.md#NoEmptyLineAfterHeading)
-* [RemoteCodeBlocks](doc/available-transformations.md#RemoteCodeBlocks)
-* [UseAsteriskForStrong](doc/available-transformations.md#UseAsteriskForStrong)
-* [UseUnderscoreForStrong](doc/available-transformations.md#UseUnderscoreForStrong)
-* [UseAsteriskForEmphasis](doc/available-transformations.md#UseAsteriskForEmphasis)
-* [UseUnderscoreForEmphasis](doc/available-transformations.md#UseUnderscoreForEmphasis)
-* [SafeHTML](doc/available-transformations.md#SafeHTML)
+* [NoSoftBreak](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#nosoftbreak)
+* [NoEmptyLineAfterHeading](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#noemptylineafterheading)
+* [RemoteCodeBlocks](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#remotecodeblocks)
+* [UseAsteriskForStrong](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#useasteriskforstrong)
+* [UseUnderscoreForStrong](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#useunderscoreforstrong)
+* [UseAsteriskForEmphasis](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#useasteriskforemphasis)
+* [UseUnderscoreForEmphasis](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#useunderscoreforemphasis)
+* [SafeHTML](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#safehtml)
+* [TableOfContents](https://github.com/gosukiwi/cooldown-cli/blob/master/dist/doc/available-transformations.md#tableofcontents)
 
 # Custom Transformations
 You can define your own transformations as such:
@@ -305,3 +306,9 @@ Specs live in `src/spec/`. To run specs:
 To run a single spec:
 
     $ npx mocha --grep MyTestName --recursive --file ./dist/spec/spec_helper.js ./dist /spec
+
+# TODO
+
+* `TableOfContents` transformation
+* `SearchAndReplace` transformation
+* Better progress report

@@ -1,16 +1,4 @@
-# Available Transformations
-Below are all the built-in transformations.
-
-* [NoSoftBreak](#NoSoftBreak)
-* [NoEmptyLineAfterHeading](#NoEmptyLineAfterHeading)
-* [RemoteCodeBlocks](#RemoteCodeBlocks)
-* [UseAsteriskForStrong](#UseAsteriskForStrong)
-* [UseUnderscoreForStrong](#UseUnderscoreForStrong)
-* [UseAsteriskForEmphasis](#UseAsteriskForEmphasis)
-* [UseUnderscoreForEmphasis](#UseUnderscoreForEmphasis)
-* [SafeHTML](#SafeHTML)
-
-## NoSoftBreak
+# NoSoftBreak
 Use space as soft-break, so there are no line-breaks in paragraphs.
 
 Transforms this:
@@ -42,7 +30,7 @@ exports.default = function (load) {
 }
 ```
 
-## NoEmptyLineAfterHeading
+# NoEmptyLineAfterHeading
 Do not leave an empty line between the heading and the start of the paragraph.
 
 Transforms this:
@@ -71,7 +59,7 @@ exports.default = function (load) {
 }
 ```
 
-## RemoteCodeBlocks
+# RemoteCodeBlocks
 This transformation takes all your code blocks and uploads them to what's called
 a `store`. By default, the only supported store is
 [Gist](https://gist.github.com/), you can get it with `load('GistStore')`.
@@ -117,7 +105,7 @@ Because storing sensitive information like that in code is not a good idea,
 consider using an environmental variable to store your token. In the example
 above, we assume we have a variable named `GITHUB_TOKEN`.
 
-## UseAsteriskForStrong
+# UseAsteriskForStrong
 Use asterisk character for strong.
 
 Transforms this:
@@ -143,7 +131,7 @@ exports.default = function (load) {
 }
 ```
 
-## UseUnderscoreForStrong
+# UseUnderscoreForStrong
 Use underscore character for strong.
 
 Transforms this:
@@ -169,7 +157,7 @@ exports.default = function (load) {
 }
 ```
 
-## UseAsteriskForEmphasis
+# UseAsteriskForEmphasis
 Use asterisk character for emphasis.
 
 Transforms this:
@@ -195,7 +183,7 @@ exports.default = function (load) {
 }
 ```
 
-## UseUnderscoreForEmphasis
+# UseUnderscoreForEmphasis
 Use underscore character for emphasis.
 
 Transforms this:
@@ -245,3 +233,6 @@ exports.default = function (load) {
   ];
 }
 ```
+
+# TableOfContents
+WIP...

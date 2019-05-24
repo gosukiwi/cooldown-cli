@@ -11,6 +11,7 @@
 { UseUnderscoreForStrong } = require('./transformations/use-underscore-for-emphasis')
 { UseUnderscoreForEmphasis } = require('./transformations/use-underscore-for-strong')
 { SafeHTML } = require('./transformations/safe-html')
+{ TableOfContents } = require('./transformations/table-of-contents')
 
 # TODO: See if there's a way transformations can register themselves
 TRANSFORMATIONS =
@@ -22,6 +23,7 @@ TRANSFORMATIONS =
   UseUnderscoreForStrong: UseUnderscoreForStrong
   UseUnderscoreForEmphasis: UseUnderscoreForEmphasis
   SafeHTML: SafeHTML
+  TableOfContents: TableOfContents
 
 UTIL =
   GistStore: (credentials) ->
