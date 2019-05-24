@@ -27,7 +27,8 @@ exports.RendererWithTransformations = class
         @compileNode event.node, event.entering, ->
           walk()
       else
-        done(@renderer.buffer.trim())
+        @cleanup =>
+          done(@renderer.buffer.trim())
     walk()
 
   # private
@@ -44,9 +45,9 @@ exports.RendererWithTransformations = class
         throw new Error("Method not found. Please, implement `##{node.type}'")
 
   runTransformationsOn: (node, entering, done) ->
-    async.map @transformations, (transformation, callback) =>
+    async.map @transformations, (transformation, _done) =>
       @run transformation, node, entering, (success) ->
-        callback(null, success)
+        _done(null, success)
     , (err, results) ->
       throw err if err
       done(results.some(Boolean))
@@ -55,7 +56,17 @@ exports.RendererWithTransformations = class
     return done(false) unless transformation?[node.type]
 
     action = if entering then 'enter' else 'leave'
-    if transformation[node.type][action]
+    if typeof transformation[node.type][action] is 'function'
       transformation[node.type][action].call(@renderer, node, -> done(true))
     else
       done(false)
+
+  cleanup: (done) ->
+    async.each @transformations, (transformation, _done) =>
+      if typeof transformation.finally is 'function'
+        transformation.finally.call(@renderer, _done)
+      else
+        _done()
+    , (err) ->
+      throw err if err
+      done()

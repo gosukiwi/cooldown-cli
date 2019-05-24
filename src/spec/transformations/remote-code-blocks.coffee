@@ -4,10 +4,14 @@
 describe 'Transformations/RemoteCodeBlocks', ->
   it "creates a gist from a `code_block`", (done) ->
     dummyStore =
-      create: (gist, callback) ->
+      create: (gist, done) ->
         gist.id = 123
         gist.url = "http://some-fake.url"
-        callback(gist)
+        done(gist)
+
+      prune: (done) ->
+        done()
+
     given = """
     ```ruby
     this_is = "some ruby code!"

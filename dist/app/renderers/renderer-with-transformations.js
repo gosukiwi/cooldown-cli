@@ -32,7 +32,9 @@ exports.RendererWithTransformations = class {
           return walk();
         });
       } else {
-        return done(this.renderer.buffer.trim());
+        return this.cleanup(() => {
+          return done(this.renderer.buffer.trim());
+        });
       }
     };
     return walk();
@@ -55,9 +57,9 @@ exports.RendererWithTransformations = class {
   }
 
   runTransformationsOn(node, entering, done) {
-    return async.map(this.transformations, (transformation, callback) => {
+    return async.map(this.transformations, (transformation, _done) => {
       return this.run(transformation, node, entering, function(success) {
-        return callback(null, success);
+        return _done(null, success);
       });
     }, function(err, results) {
       if (err) {
@@ -73,13 +75,28 @@ exports.RendererWithTransformations = class {
       return done(false);
     }
     action = entering ? 'enter' : 'leave';
-    if (transformation[node.type][action]) {
+    if (typeof transformation[node.type][action] === 'function') {
       return transformation[node.type][action].call(this.renderer, node, function() {
         return done(true);
       });
     } else {
       return done(false);
     }
+  }
+
+  cleanup(done) {
+    return async.each(this.transformations, (transformation, _done) => {
+      if (typeof transformation.finally === 'function') {
+        return transformation.finally.call(this.renderer, _done);
+      } else {
+        return _done();
+      }
+    }, function(err) {
+      if (err) {
+        throw err;
+      }
+      return done();
+    });
   }
 
 };

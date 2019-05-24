@@ -11,13 +11,3 @@ exports.Compiler = class
 
   compile: (input, done) ->
     @renderer.render @parser.parse(input), done
-
-  cleanup: (done) ->
-    async.each @transformations, (transformation, callback) ->
-      if typeof transformation.finally is 'function'
-        transformation.finally?(callback)
-      else
-        callback()
-    , (err) ->
-      throw err if err
-      done()

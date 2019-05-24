@@ -10,6 +10,7 @@
 { UseAsteriskForEmphasis } = require('./transformations/use-asterisk-for-emphasis')
 { UseUnderscoreForStrong } = require('./transformations/use-underscore-for-emphasis')
 { UseUnderscoreForEmphasis } = require('./transformations/use-underscore-for-strong')
+{ SafeHTML } = require('./transformations/safe-html')
 
 # TODO: See if there's a way transformations can register themselves
 TRANSFORMATIONS =
@@ -20,6 +21,7 @@ TRANSFORMATIONS =
   UseAsteriskForEmphasis: UseAsteriskForEmphasis
   UseUnderscoreForStrong: UseUnderscoreForStrong
   UseUnderscoreForEmphasis: UseUnderscoreForEmphasis
+  SafeHTML: SafeHTML
 
 UTIL =
   GistStore: (credentials) ->

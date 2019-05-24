@@ -15,19 +15,19 @@ exports.Application = class
     @mkdir()
     glob @glob, {}, (err, files) =>
       throw err if err
-      async.map files, (file, callback) =>
-        @process(file, callback)
-      , (err, _result) =>
+      async.each files, (file, _done) =>
+        @process(file, _done)
+      , (err) =>
         throw err if err
-        @compiler.cleanup(done)
+        done()
 
   # private
 
-  process: (file, callback) ->
+  process: (file, _done) ->
     data = fs.readFileSync(file, 'utf8')
     @compile data, (content) =>
       @write baseFile: file, newFileContent: content
-      callback(null, file)
+      _done()
 
   write: (options) ->
     baseFile = options.baseFile

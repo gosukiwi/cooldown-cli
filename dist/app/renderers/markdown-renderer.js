@@ -1,21 +1,12 @@
-var DEFAULT_OPTIONS, Renderer, markdownEscape;
+var Renderer, markdownEscape;
 
 ({Renderer} = require('./renderer'));
 
 markdownEscape = require('markdown-escape');
 
-// TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
-// that in a transformation object/function.
-// TODO: This should be moved to a transformations API.
-DEFAULT_OPTIONS = {
-  softbreak: '\n',
-  safe: false // skips inline HTML
-};
-
 exports.MarkdownRenderer = class extends Renderer {
-  constructor(options) {
+  constructor() {
     super();
-    this.options = Object.assign(DEFAULT_OPTIONS, options);
     this.lastOut = '\n';
     this.listTypeTags = [];
   }
@@ -28,7 +19,7 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   softbreak() {
-    return this.put(this.options.softbreak);
+    return this.put("\n");
   }
 
   linebreak() {
@@ -44,9 +35,6 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   html_inline(node) {
-    if (this.options.safe) {
-      return;
-    }
     return this.put(node.literal);
   }
 
@@ -125,9 +113,6 @@ exports.MarkdownRenderer = class extends Renderer {
   }
 
   html_block(node) {
-    if (this.options.safe) {
-      return;
-    }
     this.cr();
     this.put(node.literal);
     return this.cr();

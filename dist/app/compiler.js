@@ -19,19 +19,4 @@ exports.Compiler = class {
     return this.renderer.render(this.parser.parse(input), done);
   }
 
-  cleanup(done) {
-    return async.each(this.transformations, function(transformation, callback) {
-      if (typeof transformation.finally === 'function') {
-        return typeof transformation.finally === "function" ? transformation.finally(callback) : void 0;
-      } else {
-        return callback();
-      }
-    }, function(err) {
-      if (err) {
-        throw err;
-      }
-      return done();
-    });
-  }
-
 };

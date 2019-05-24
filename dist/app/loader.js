@@ -1,4 +1,4 @@
-var GistService, GistStore, LocalStorage, NoEmptyLineAfterHeading, NoSoftBreak, RemoteCodeBlocks, RequestService, TRANSFORMATIONS, TransformationNotFoundError, UTIL, UseAsteriskForEmphasis, UseAsteriskForStrong, UseUnderscoreForEmphasis, UseUnderscoreForStrong;
+var GistService, GistStore, LocalStorage, NoEmptyLineAfterHeading, NoSoftBreak, RemoteCodeBlocks, RequestService, SafeHTML, TRANSFORMATIONS, TransformationNotFoundError, UTIL, UseAsteriskForEmphasis, UseAsteriskForStrong, UseUnderscoreForEmphasis, UseUnderscoreForStrong;
 
 ({TransformationNotFoundError} = require('./errors'));
 
@@ -24,6 +24,8 @@ var GistService, GistStore, LocalStorage, NoEmptyLineAfterHeading, NoSoftBreak, 
 
 ({UseUnderscoreForEmphasis} = require('./transformations/use-underscore-for-strong'));
 
+({SafeHTML} = require('./transformations/safe-html'));
+
 // TODO: See if there's a way transformations can register themselves
 TRANSFORMATIONS = {
   NoSoftBreak: NoSoftBreak,
@@ -32,7 +34,8 @@ TRANSFORMATIONS = {
   UseAsteriskForStrong: UseAsteriskForStrong,
   UseAsteriskForEmphasis: UseAsteriskForEmphasis,
   UseUnderscoreForStrong: UseUnderscoreForStrong,
-  UseUnderscoreForEmphasis: UseUnderscoreForEmphasis
+  UseUnderscoreForEmphasis: UseUnderscoreForEmphasis,
+  SafeHTML: SafeHTML
 };
 
 UTIL = {

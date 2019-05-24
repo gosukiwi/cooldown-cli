@@ -1,17 +1,9 @@
 { Renderer } = require('./renderer')
 markdownEscape = require('markdown-escape')
 
-# TODO: For the join-sentences thing, we have to set `softbreak` to `""`. Do
-# that in a transformation object/function.
-# TODO: This should be moved to a transformations API.
-DEFAULT_OPTIONS =
-  softbreak: '\n'
-  safe: false # skips inline HTML
-
 exports.MarkdownRenderer = class extends Renderer
-  constructor: (options) ->
+  constructor: ->
     super()
-    @options = Object.assign DEFAULT_OPTIONS, options
     @lastOut = '\n'
     @listTypeTags = []
 
@@ -22,7 +14,7 @@ exports.MarkdownRenderer = class extends Renderer
     @putEscaped node.literal
 
   softbreak: ->
-    @put @options.softbreak
+    @put "\n"
 
   linebreak: ->
     @cr()
@@ -34,7 +26,6 @@ exports.MarkdownRenderer = class extends Renderer
     @put '**'
 
   html_inline: (node) ->
-    return if @options.safe
     @put node.literal
 
   link: (node, entering) ->
@@ -96,8 +87,6 @@ exports.MarkdownRenderer = class extends Renderer
     @put "#{tag} " if entering
 
   html_block: (node) ->
-    return if @options.safe
-
     @cr()
     @put node.literal
     @cr()

@@ -26,19 +26,19 @@ exports.Application = class {
       if (err) {
         throw err;
       }
-      return async.map(files, (file, callback) => {
-        return this.process(file, callback);
-      }, (err, _result) => {
+      return async.each(files, (file, _done) => {
+        return this.process(file, _done);
+      }, (err) => {
         if (err) {
           throw err;
         }
-        return this.compiler.cleanup(done);
+        return done();
       });
     });
   }
 
   // private
-  process(file, callback) {
+  process(file, _done) {
     var data;
     data = fs.readFileSync(file, 'utf8');
     return this.compile(data, (content) => {
@@ -46,7 +46,7 @@ exports.Application = class {
         baseFile: file,
         newFileContent: content
       });
-      return callback(null, file);
+      return _done();
     });
   }
 

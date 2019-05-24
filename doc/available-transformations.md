@@ -8,6 +8,7 @@ Below are all the built-in transformations.
 * [UseUnderscoreForStrong](#UseUnderscoreForStrong)
 * [UseAsteriskForEmphasis](#UseAsteriskForEmphasis)
 * [UseUnderscoreForEmphasis](#UseUnderscoreForEmphasis)
+* [SafeHTML](#SafeHTML)
 
 ## NoSoftBreak
 Use space as soft-break, so there are no line-breaks in paragraphs.
@@ -216,6 +217,31 @@ exports.default = function (load) {
   return [
     // ...
     load('UseUnderscoreForEmphasis')
+  ];
+}
+```
+
+# SafeHTML
+Ignore HTML inlines and blocks
+
+Transforms this:
+
+```markdown
+<p>Hello, World</p>
+```
+
+Into this:
+
+```markdown
+```
+
+Example usage:
+
+```javascript
+exports.default = function (load) {
+  return [
+    // ...
+    load('SafeHTML')
   ];
 }
 ```

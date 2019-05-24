@@ -8,10 +8,13 @@ describe('Transformations/RemoteCodeBlocks', function() {
   return it("creates a gist from a `code_block`", function(done) {
     var compiler, dummyStore, given;
     dummyStore = {
-      create: function(gist, callback) {
+      create: function(gist, done) {
         gist.id = 123;
         gist.url = "http://some-fake.url";
-        return callback(gist);
+        return done(gist);
+      },
+      prune: function(done) {
+        return done();
       }
     };
     given = "```ruby\nthis_is = \"some ruby code!\"\n```";
