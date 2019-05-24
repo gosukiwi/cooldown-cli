@@ -1,10 +1,10 @@
 exports.GistService = class
-  constructor: (request, credentials) ->
-    @request = request
+  constructor: (http, credentials) ->
+    @http = http
     @credentials = credentials
 
   create: (params, callback) ->
-    @request.post("https://api.github.com/gists", @credentials, params, callback)
+    @http.post("https://api.github.com/gists", @credentials, params, callback)
 
   delete: (id, callback) ->
-    @request.delete("https://api.github.com/gists/#{id}", @credentials, callback)
+    @http.delete("https://api.github.com/gists/#{id}", @credentials, callback)

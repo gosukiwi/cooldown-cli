@@ -1,4 +1,5 @@
 async = require("async")
+{ MarkdownRenderer } = require('./markdown-renderer')
 
 # This class takes a renderer and a collection of transformations. Then when
 # rendering the AST, for each node type, it will run all relevant
@@ -11,14 +12,14 @@ async = require("async")
 # If a transformation was not defined for a particular node type, it defaults to
 # running the renderer's method instead.
 #
-exports.RendererWithTransformations = class
-  constructor: (renderer, transformations) ->
-    @renderer        = renderer
+exports.TransformableMarkdownRenderer = class extends MarkdownRenderer
+  constructor: (transformations) ->
+    super()
     @transformations = transformations
 
   render: (ast, done) ->
-    @renderer.buffer = ''
-    @renderer.lastOut = '\n'
+    @buffer = ''
+    @lastOut = '\n'
 
     walker = ast.walker()
     walk = =>
@@ -28,7 +29,7 @@ exports.RendererWithTransformations = class
           walk()
       else
         @cleanup =>
-          done(@renderer.buffer.trim())
+          done(@buffer.trim())
     walk()
 
   # private
@@ -38,8 +39,8 @@ exports.RendererWithTransformations = class
       return done() if success
 
       # no filter ran for this node, run default renderer's method
-      if typeof @renderer[node.type] is 'function'
-        @renderer[node.type](node, entering)
+      if typeof this[node.type] is 'function'
+        this[node.type](node, entering)
         done()
       else
         throw new Error("Method not found. Please, implement `##{node.type}'")
@@ -57,14 +58,14 @@ exports.RendererWithTransformations = class
 
     action = if entering then 'enter' else 'leave'
     if typeof transformation[node.type][action] is 'function'
-      transformation[node.type][action].call(@renderer, node, -> done(true))
+      transformation[node.type][action].call(this, node, -> done(true))
     else
       done(false)
 
   cleanup: (done) ->
     async.each @transformations, (transformation, _done) =>
       if typeof transformation.finally is 'function'
-        transformation.finally.call(@renderer, _done)
+        transformation.finally.call(this, _done)
       else
         _done()
     , (err) ->

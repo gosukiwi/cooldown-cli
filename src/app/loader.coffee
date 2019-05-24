@@ -1,6 +1,6 @@
 { TransformationNotFoundError } = require('./errors')
 { GistStore } = require("./stores/gist-store")
-{ RequestService } = require("./services/request-service")
+{ HTTPRequestService } = require("./services/http-request-service")
 { GistService } = require("./services/gist-service")
 { LocalStorage } = require("node-localstorage")
 { NoSoftBreak } = require('./transformations/no-soft-break')
@@ -25,7 +25,7 @@ TRANSFORMATIONS =
 
 UTIL =
   GistStore: (credentials) ->
-    client  = new GistService(new RequestService(), credentials)
+    client  = new GistService(new HTTPRequestService(), credentials)
     storage = new LocalStorage("./.cooldown-cache")
     new GistStore(client, storage)
 

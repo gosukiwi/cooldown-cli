@@ -1,15 +1,15 @@
 exports.GistService = class {
-  constructor(request, credentials) {
-    this.request = request;
+  constructor(http, credentials) {
+    this.http = http;
     this.credentials = credentials;
   }
 
   create(params, callback) {
-    return this.request.post("https://api.github.com/gists", this.credentials, params, callback);
+    return this.http.post("https://api.github.com/gists", this.credentials, params, callback);
   }
 
   delete(id, callback) {
-    return this.request.delete(`https://api.github.com/gists/${id}`, this.credentials, callback);
+    return this.http.delete(`https://api.github.com/gists/${id}`, this.credentials, callback);
   }
 
 };

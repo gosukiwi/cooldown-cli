@@ -1,12 +1,11 @@
-{ MarkdownRenderer } = require('./renderers/markdown-renderer')
-{ RendererWithTransformations } = require('./renderers/renderer-with-transformations')
+{ TransformableMarkdownRenderer } = require('./renderers/transformable-markdown-renderer')
 commonmark = require('commonmark')
 async = require('async')
 
 exports.Compiler = class
   constructor: (transformations) ->
     @transformations = transformations
-    @renderer = new RendererWithTransformations(new MarkdownRenderer(), transformations)
+    @renderer = new TransformableMarkdownRenderer(transformations)
     @parser   = new commonmark.Parser()
 
   compile: (input, done) ->

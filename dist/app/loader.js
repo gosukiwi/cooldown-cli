@@ -1,10 +1,10 @@
-var GistService, GistStore, LocalStorage, NoEmptyLineAfterHeading, NoSoftBreak, RemoteCodeBlocks, RequestService, SafeHTML, TRANSFORMATIONS, TransformationNotFoundError, UTIL, UseAsteriskForEmphasis, UseAsteriskForStrong, UseUnderscoreForEmphasis, UseUnderscoreForStrong;
+var GistService, GistStore, HTTPRequestService, LocalStorage, NoEmptyLineAfterHeading, NoSoftBreak, RemoteCodeBlocks, SafeHTML, TRANSFORMATIONS, TransformationNotFoundError, UTIL, UseAsteriskForEmphasis, UseAsteriskForStrong, UseUnderscoreForEmphasis, UseUnderscoreForStrong;
 
 ({TransformationNotFoundError} = require('./errors'));
 
 ({GistStore} = require("./stores/gist-store"));
 
-({RequestService} = require("./services/request-service"));
+({HTTPRequestService} = require("./services/http-request-service"));
 
 ({GistService} = require("./services/gist-service"));
 
@@ -41,7 +41,7 @@ TRANSFORMATIONS = {
 UTIL = {
   GistStore: function(credentials) {
     var client, storage;
-    client = new GistService(new RequestService(), credentials);
+    client = new GistService(new HTTPRequestService(), credentials);
     storage = new LocalStorage("./.cooldown-cache");
     return new GistStore(client, storage);
   }
