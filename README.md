@@ -87,218 +87,15 @@ exports.default = function (load) {
 ```
 
 # Available Transformations
-Below are all the buil-in transformations.
+Below are all the built-in transformations.
 
-## NoSoftBreak
-Use space as soft-break, so there are no line-breaks in paragraphs.
-
-Transforms this:
-
-```markdown
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ut mauris ut
-tellus scelerisque volutpat a sed lacus.
-
-Cras vulputate, sapien maximus vestibulum pulvinar, erat nibh ornare orci, ut
-pretium libero tellus quis sapien.
-```
-
-Into this:
-
-```markdown
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ut mauris ut tellus scelerisque volutpat a sed lacus.
-
-Cras vulputate, sapien maximus vestibulum pulvinar, erat nibh ornare orci, ut pretium libero tellus quis sapien.
-```
-
-Example usage:
-
-```javascript
-exports.default = function (load) {
-  return [
-    // ...
-    load('NoSoftBreak')
-  ];
-}
-```
-
-## NoEmptyLineAfterHeading
-Do not leave an empty line between the heading and the start of the paragraph.
-
-Transforms this:
-
-```markdown
-# Title
-
-This is a paragraph [...]
-```
-
-Into this:
-
-```markdown
-# Title
-This is a paragraph [...]
-```
-
-Example usage:
-
-```javascript
-exports.default = function (load) {
-  return [
-    // ...
-    load('NoEmptyLineAfterHeading')
-  ];
-}
-```
-
-## RemoteCodeBlocks
-This transformation takes all your code blocks and uploads them to what's called
-a `store`. By default, the only supported store is
-[Gist](https://gist.github.com/), you can get it with `load('GistStore')`.
-
-Transforms this:
-
-
-    This is a demo code snippet:
-
-    ```ruby
-    foo = Bar.new(1, 2, 3)
-    ```  
-
-Into this:
-
-    This is a demo code snippet:
-
-    <script src="https://gist.gisthub.com/..."></script>
-
-Example usage:
-```javascript
-credentials = {
-  username: 'my-github-username',
-  password: process.env.GITHUB_TOKEN
-}
-
-exports.default = function (load) {
-  store = load('GistStore')(credentials)
-
-  return [
-    // ...
-    load('RemoteCodeBlocks', store)
-  ];
-}
-```
-
-Note that the store will need your GitHub `username` as well as a `password`,
-which is  your [personal API
-token](https://github.blog/2013-05-16-personal-api-tokens/). Make sure the token
-has access to your gists!
-
-Because storing sensitive information like that in code is not a good idea,
-consider using an environmental variable to store your token. In the example
-above, we assume we have a variable named `GITHUB_TOKEN`.
-
-## UseAsteriskForStrong
-Use asterisk character for strong.
-
-Transforms this:
-
-```markdown
-Some __text__.
-```
-
-Into this:
-
-```markdown
-Some **text**.
-```
-
-Example usage:
-
-```javascript
-exports.default = function (load) {
-  return [
-    // ...
-    load('UseAsteriskForStrong')
-  ];
-}
-```
-
-## UseUnderscoreForStrong
-Use underscore character for strong.
-
-Transforms this:
-
-```markdown
-Some **text**.
-```
-
-Into this:
-
-```markdown
-Some __text__.
-```
-
-Example usage:
-
-```javascript
-exports.default = function (load) {
-  return [
-    // ...
-    load('UseUnderscoreForStrong')
-  ];
-}
-```
-
-## UseAsteriskForEmphasis
-Use asterisk character for emphasis.
-
-Transforms this:
-
-```markdown
-Some _text_.
-```
-
-Into this:
-
-```markdown
-Some *text*.
-```
-
-Example usage:
-
-```javascript
-exports.default = function (load) {
-  return [
-    // ...
-    load('UseAsteriskForEmphasis')
-  ];
-}
-```
-
-## UseUnderscoreForEmphasis
-Use underscore character for emphasis.
-
-Transforms this:
-
-```markdown
-Some *text*.
-```
-
-Into this:
-
-```markdown
-Some _text_.
-```
-
-Example usage:
-
-```javascript
-exports.default = function (load) {
-  return [
-    // ...
-    load('UseUnderscoreForEmphasis')
-  ];
-}
-```
+* [NoSoftBreak](doc/available-transformations.md#NoSoftBreak)
+* [NoEmptyLineAfterHeading](doc/available-transformations.md#NoEmptyLineAfterHeading)
+* [RemoteCodeBlocks](doc/available-transformations.md#RemoteCodeBlocks)
+* [UseAsteriskForStrong](doc/available-transformations.md#UseAsteriskForStrong)
+* [UseUnderscoreForStrong](doc/available-transformations.md#UseUnderscoreForStrong)
+* [UseAsteriskForEmphasis](doc/available-transformations.md#UseAsteriskForEmphasis)
+* [UseUnderscoreForEmphasis](doc/available-transformations.md#UseUnderscoreForEmphasis)
 
 # Custom Transformations
 You can define your own transformations as such:
@@ -453,6 +250,21 @@ You can use Cooldown programmatically as such:
 ```javascript
 const { Cooldown, Compiler, coolfile, loader } = require('cooldown')
 const transformations = coolfile('./coolfile.js')(loader)
+const compiler = new Compiler(transformations)
+const cooldown = new Cooldown('./src/*.md', './out', compiler)
+
+cooldown.run(() => console.log('Done!'))
+```
+
+If you don't want to use a `coolfile.js` file, or you don't need to, you can
+always manually load the transformations you want:
+
+```javascript
+const { Cooldown, Compiler, loader } = require('cooldown')
+const transformations = [
+  loader('NoSoftBreak'),
+  loader('UseAsteriskForStrong')
+]
 const compiler = new Compiler(transformations)
 const cooldown = new Cooldown('./src/*.md', './out', compiler)
 
