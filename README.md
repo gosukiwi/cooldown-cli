@@ -96,6 +96,7 @@ Below are all the built-in transformations.
 * [UseUnderscoreForStrong](doc/available-transformations.md#UseUnderscoreForStrong)
 * [UseAsteriskForEmphasis](doc/available-transformations.md#UseAsteriskForEmphasis)
 * [UseUnderscoreForEmphasis](doc/available-transformations.md#UseUnderscoreForEmphasis)
+* [SafeHTML](doc/available-transformations.md#SafeHTML)
 
 # Custom Transformations
 You can define your own transformations as such:
