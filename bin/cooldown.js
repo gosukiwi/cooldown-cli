@@ -8,7 +8,7 @@ const program   = new commander.Command()
 const coolfile = require('../dist/app/coolfile')
 
 const options = program
-  .version('0.0.1')
+  .version('0.0.2')
   .option('-i, --input <glob>', 'input files to be transformed')
   .option('-o, --output <dir>', 'directory to write transformed files', './out')
   .option('-c, --coolfile <path>', 'the location of the coolfile', './coolfile.js')
