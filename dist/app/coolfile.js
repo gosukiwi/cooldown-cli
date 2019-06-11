@@ -1,11 +1,17 @@
-var fs, loader;
+var CoolfileNotFoundError, fs, loader;
 
 loader = require('./loader');
 
 fs = require('fs');
 
+({CoolfileNotFoundError} = require('./errors'));
+
 module.exports = function(path) {
   var coolfile;
-  coolfile = fs.readFileSync(path, "utf-8");
-  return eval(coolfile)(loader);
+  try {
+    coolfile = fs.readFileSync(path, "utf-8");
+    return eval(coolfile)(loader);
+  } catch (error) {
+    throw new CoolfileNotFoundError;
+  }
 };

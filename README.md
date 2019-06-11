@@ -312,3 +312,4 @@ To run a single spec:
 * `TableOfContents` transformation
 * `SearchAndReplace` transformation
 * Better progress report
+* Create `--init` command to initialize a default coolfile
