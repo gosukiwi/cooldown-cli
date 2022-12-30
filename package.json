@@ -23,7 +23,7 @@
     "del": "^4.1.1",
     "gulp": "^4.0.2",
     "gulp-coffee": "^3.0.3",
-    "mocha": "^6.1.4"
+    "mocha": "^10.2.0"
   },
   "dependencies": {
     "async": "^2.6.2",
